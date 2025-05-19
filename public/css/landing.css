@@ -1,0 +1,106 @@
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    padding-top: 56px; /* For fixed navbar */
+}
+
+/* Section Styles */
+.section-title {
+    position: relative;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.section-title:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    width: 50px;
+    height: 3px;
+    background-color: #0d6efd; /* Bootstrap primary color */
+}
+
+/* Card Styles */
+.card {
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* Custom Classes */
+.text-primary {
+    color: #0d6efd !important;
+}
+
+.bg-primary {
+    background-color: #0d6efd !important;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+}
+
+.hero-section .carousel-item {
+    height: 70vh;
+    min-height: 500px;
+}
+
+.hero-section .carousel-item img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.hero-section .carousel-caption {
+    bottom: 20%;
+    text-align: left;
+    max-width: 600px;
+    left: 10%;
+}
+
+/* Search Box */
+.search-box {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+}
+
+.search-box .nav-link {
+    color: #666;
+    font-weight: 500;
+}
+
+.search-box .nav-link.active {
+    color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .hero-section .carousel-caption {
+        bottom: 10%;
+        text-align: center;
+        left: 5%;
+        right: 5%;
+    }
+
+    .search-box-wrapper {
+        margin-top: -50px;
+    }
+}
