@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TouristController;
+use App\Http\Controllers\CreativeEconomyController;
 use App\Http\Controllers\Tourist\DashboardController;
 
 // Basic landing pages
@@ -119,5 +120,7 @@ Route::middleware(['auth', 'verified', 'tourist'])->group(function () {
             Route::delete('/{itinerary}', [TouristController::class, 'destroyItinerary'])
                 ->name('destroy');
         });
+
+        
     });
 });
