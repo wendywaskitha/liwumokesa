@@ -12,9 +12,16 @@ class Booking extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'travel_package_id', 'booking_code',
-        'booking_date', 'booking_status', 'payment_status',
-        'payment_proof', 'total_price', 'notes'
+        'user_id',
+        'travel_package_id',
+        'booking_code',
+        'booking_date',
+        'quantity',
+        'booking_status',
+        'payment_status',
+        'payment_proof',
+        'total_price',
+        'notes'
     ];
 
     protected $casts = [

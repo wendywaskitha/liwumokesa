@@ -7,6 +7,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^3.1",
         "filament/filament": "^3.3",
         "laravel/breeze": "^2.3",
         "laravel/framework": "^12.0",
@@ -14,6 +15,7 @@
         "laravel/tinker": "^2.10.1",
         "phpoffice/phpspreadsheet": "^4.2",
         "saade/filament-fullcalendar": "^3.2",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-activitylog": "^4.10"
     },
     "require-dev": {

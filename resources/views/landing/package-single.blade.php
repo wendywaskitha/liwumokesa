@@ -194,10 +194,30 @@
         </div>
     </div>
 
-    @auth
-        @include('landing.partials.modals.booking-modal', ['package' => $package])
-    @endauth
+    
 @endsection
+
+@push('scripts')
+<script>
+function showBookingModal(packageId) {
+    const modalElement = document.getElementById('bookingModal' + packageId);
+    if (modalElement) {
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap modals
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        new bootstrap.Modal(modal, {
+            keyboard: false
+        });
+    });
+});
+</script>
+@endpush
 
 @push('styles')
     <style>
@@ -315,36 +335,4 @@
             }
         }
     </style>
-@endpush
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Bootstrap modal
-    const modalElement = document.getElementById('bookingModal{{ $package->id }}');
-    if (modalElement) {
-        const modal = new bootstrap.Modal(modalElement, {
-            backdrop: 'static',
-            keyboard: false
-        });
-
-        // Handle modal trigger button
-        const modalTriggers = document.querySelectorAll('[data-bs-target="#bookingModal{{ $package->id }}"]');
-        modalTriggers.forEach(trigger => {
-            trigger.addEventListener('click', function() {
-                modal.show();
-            });
-        });
-
-        // Handle modal close
-        modalElement.addEventListener('hidden.bs.modal', function() {
-            document.body.classList.remove('modal-open');
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-                backdrop.remove();
-            }
-        });
-    }
-});
-</script>
 @endpush

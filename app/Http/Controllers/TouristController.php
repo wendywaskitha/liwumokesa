@@ -123,49 +123,6 @@ class TouristController extends Controller
         return back()->with('success', 'Foto profil berhasil diperbarui');
     }
 
-
-    public function bookings()
-    {
-        $bookings = Booking::where('user_id', auth()->id())
-            ->with('travelPackage')
-            ->latest()
-            ->paginate(10);
-
-        return view('tourist.bookings.index', compact('bookings'));
-    }
-
-    public function storeBooking(Request $request)
-    {
-        $validated = $request->validate([
-            'travel_package_id' => 'required|exists:travel_packages,id',
-            'booking_date' => 'required|date|after_or_equal:today',
-            'notes' => 'nullable|string'
-        ]);
-
-        // Generate booking code
-        $bookingCode = 'BK' . date('Ymd') . strtoupper(Str::random(4));
-
-        // Get travel package
-        $package = TravelPackage::findOrFail($validated['travel_package_id']);
-
-        // Create booking
-        $booking = Booking::create([
-            'user_id' => auth()->id(),
-            'travel_package_id' => $package->id,
-            'booking_code' => $bookingCode,
-            'booking_date' => $validated['booking_date'],
-            'booking_status' => 'pending',
-            'payment_status' => 'unpaid',
-            'total_price' => $package->price,
-            'notes' => $validated['notes']
-        ]);
-
-        return redirect()->route('tourist.bookings.show', $booking)
-            ->with('success', 'Pemesanan berhasil dibuat. Silakan lakukan pembayaran.');
-    }
-
-
-
     public function reviews()
     {
         $reviews = Review::where('user_id', auth()->id())

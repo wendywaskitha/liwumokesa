@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TouristController;
@@ -84,14 +85,17 @@ Route::middleware(['auth', 'verified', 'tourist'])->group(function () {
         Route::put('/profile', [TouristController::class, 'updateProfile'])->name('profile.update');
         Route::put('/profile/photo', [TouristController::class, 'updateProfilePhoto'])->name('profile.update-photo');
 
-        // Bookings
-        Route::prefix('bookings')->name('bookings.')->group(function () {
-            Route::get('/', [TouristController::class, 'bookings'])
-                ->name('index');
-            Route::post('/', [TouristController::class, 'storeBooking'])
-                ->name('store');
-            Route::get('/{booking}', [TouristController::class, 'showBooking'])
-                ->name('show');
+        // Booking Routes
+        Route::controller(BookingController::class)->prefix('bookings')->name('bookings.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create/{package}', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{booking}', 'show')->name('show');
+            Route::get('/{booking}/payment', 'payment')->name('payment');
+            Route::post('/{booking}/upload-payment', 'uploadPayment')->name('upload-payment'); // Add this
+            Route::get('/{booking}/confirmation', 'confirmation')->name('confirmation');
+            Route::get('/{booking}/download-ticket', 'downloadTicket')->name('download-ticket');
+            Route::post('/{booking}/cancel', 'cancel')->name('cancel');
         });
 
         // Reviews
@@ -121,6 +125,6 @@ Route::middleware(['auth', 'verified', 'tourist'])->group(function () {
                 ->name('destroy');
         });
 
-        
+
     });
 });
