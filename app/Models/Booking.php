@@ -21,12 +21,16 @@ class Booking extends Model
         'payment_status',
         'payment_proof',
         'total_price',
-        'notes'
+        'notes',
+        'is_used',
+        'used_at'
     ];
 
     protected $casts = [
         'booking_date' => 'datetime',
-        'total_price' => 'float'
+        'total_price' => 'float',
+        'is_used' => 'boolean',
+        'used_at' => 'datetime',
     ];
 
     public function user()

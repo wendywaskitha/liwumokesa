@@ -15,15 +15,43 @@
             <div class="mb-4 card">
                 <div class="bg-white card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 card-title">Detail Pemesanan</h5>
-                    <span class="badge bg-{{ $booking->booking_status === 'confirmed' ? 'success' : ($booking->booking_status === 'cancelled' ? 'danger' : 'warning') }}">
-                        {{ ucfirst($booking->booking_status) }}
-                    </span>
+                    <div class="gap-2 d-flex align-items-center">
+                        @if($booking->booking_status === 'confirmed' && $booking->payment_status === 'paid')
+                            @if(!$booking->is_used)
+                                <a href="{{ route('tourist.bookings.download-ticket', $booking) }}"
+                                   class="btn btn-primary btn-sm">
+                                    <i class="bi bi-download me-2"></i>
+                                    Download E-Ticket
+                                </a>
+                            @else
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    Tiket Sudah Digunakan
+                                </span>
+                            @endif
+                        @endif
+                        <span class="badge bg-{{ $booking->booking_status === 'confirmed' ? 'success' : ($booking->booking_status === 'cancelled' ? 'danger' : 'warning') }}">
+                            {{ ucfirst($booking->booking_status) }}
+                        </span>
+                    </div>
                 </div>
                 <div class="card-body">
                     <!-- Package Info -->
                     @include('tourist.bookings.partials._booking-details')
 
                     <hr>
+
+                    @if($booking->is_used)
+                        <div class="mb-4 alert alert-secondary">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill fs-4 me-2"></i>
+                                <div>
+                                    <h6 class="mb-1 alert-heading">Tiket Telah Digunakan</h6>
+                                    <p class="mb-0">Tiket ini telah diverifikasi pada {{ $booking->used_at->format('d M Y H:i') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
 
                     <!-- Status Timeline -->
                     @include('tourist.bookings.partials._booking-timeline')

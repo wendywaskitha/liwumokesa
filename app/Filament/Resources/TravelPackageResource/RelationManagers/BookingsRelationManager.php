@@ -10,6 +10,8 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use Filament\Notifications\Notification;
+use Filament\Tables\Columns\BadgeColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\RelationManagers\RelationManager;
 
@@ -126,13 +128,21 @@ class BookingsRelationManager extends RelationManager
                         'danger' => 'cancelled',
                     ]),
 
-                Tables\Columns\BadgeColumn::make('payment_status')
-                    ->label('Pembayaran')
-                    ->colors([
-                        'danger' => 'unpaid',
-                        'success' => 'paid',
-                        'warning' => 'refunded',
-                    ]),
+                Tables\Columns\TextColumn::make('is_used')
+                    ->label('Status Tiket')
+                    ->formatStateUsing(function ($state, $record) {
+                        if (!$record->is_used) {
+                            return 'Belum Digunakan';
+                        }
+                        return 'Digunakan pada ' . $record->used_at?->format('d M Y H:i');
+                    })
+                    ->badge()
+                    ->color(fn ($record) => $record->is_used ? 'success' : 'warning'),
+
+                Tables\Columns\TextColumn::make('used_at')
+                    ->label('Waktu Penggunaan')
+                    ->dateTime('d M Y H:i')
+                    ->visible(fn ($record) => $record->is_used),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('booking_status')
@@ -166,6 +176,31 @@ class BookingsRelationManager extends RelationManager
                             'payment_status' => 'paid',
                         ]))
                         ->visible(fn (Booking $record): bool => $record->booking_status === 'pending'),
+
+                    Tables\Actions\Action::make('verifyTicket')
+                        ->label('Verifikasi Tiket')
+                        ->icon('heroicon-o-ticket')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Verifikasi Tiket')
+                        ->modalDescription('Apakah Anda yakin ingin memverifikasi tiket ini?')
+                        ->modalSubmitActionLabel('Ya, Verifikasi')
+                        ->visible(fn (Booking $record) =>
+                            !$record->is_used &&
+                            $record->booking_status === 'confirmed' &&
+                            $record->payment_status === 'paid'
+                        )
+                        ->action(function (Booking $record) {
+                            $record->update([
+                                'is_used' => true,
+                                'used_at' => now()
+                            ]);
+
+                            Notification::make()
+                                ->title('Tiket berhasil diverifikasi')
+                                ->success()
+                                ->send();
+                        }),
 
                     Tables\Actions\Action::make('cancel')
                         ->label('Batalkan Pemesanan')

@@ -1,12 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TouristController;
 use App\Http\Controllers\CreativeEconomyController;
 use App\Http\Controllers\Tourist\DashboardController;
+
+Route::get('verify/ticket/{code}', [TicketController::class, 'verify'])
+    ->name('verify.ticket')
+    ->middleware(['auth', 'role:admin']);
 
 // Basic landing pages
 Route::get('/', [LandingController::class, 'home'])->name('home');
