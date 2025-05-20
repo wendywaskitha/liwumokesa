@@ -130,19 +130,13 @@ class BookingsRelationManager extends RelationManager
 
                 Tables\Columns\TextColumn::make('is_used')
                     ->label('Status Tiket')
-                    ->formatStateUsing(function ($state, $record) {
-                        if (!$record->is_used) {
-                            return 'Belum Digunakan';
-                        }
-                        return 'Digunakan pada ' . $record->used_at?->format('d M Y H:i');
-                    })
+                    ->formatStateUsing(fn ($record) =>
+                        $record->is_used
+                            ? "Digunakan pada " . $record->used_at?->format('d M Y H:i')
+                            : "Belum Digunakan"
+                    )
                     ->badge()
                     ->color(fn ($record) => $record->is_used ? 'success' : 'warning'),
-
-                Tables\Columns\TextColumn::make('used_at')
-                    ->label('Waktu Penggunaan')
-                    ->dateTime('d M Y H:i')
-                    ->visible(fn ($record) => $record->is_used),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('booking_status')
@@ -185,12 +179,12 @@ class BookingsRelationManager extends RelationManager
                         ->modalHeading('Verifikasi Tiket')
                         ->modalDescription('Apakah Anda yakin ingin memverifikasi tiket ini?')
                         ->modalSubmitActionLabel('Ya, Verifikasi')
-                        ->visible(fn (Booking $record) =>
+                        ->visible(fn ($record) =>
                             !$record->is_used &&
                             $record->booking_status === 'confirmed' &&
                             $record->payment_status === 'paid'
                         )
-                        ->action(function (Booking $record) {
+                        ->action(function ($record) {
                             $record->update([
                                 'is_used' => true,
                                 'used_at' => now()

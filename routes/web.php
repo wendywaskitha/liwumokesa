@@ -9,9 +9,14 @@ use App\Http\Controllers\TouristController;
 use App\Http\Controllers\CreativeEconomyController;
 use App\Http\Controllers\Tourist\DashboardController;
 
-Route::get('verify/ticket/{code}', [TicketController::class, 'verify'])
-    ->name('verify.ticket')
-    ->middleware(['auth', 'role:admin']);
+Route::middleware(['auth'])->group(function () {
+    Route::get('verify-ticket/{code}', [TicketController::class, 'showVerification'])
+        ->name('verify.ticket');
+
+    Route::get('api/verify-ticket/{code}', [TicketController::class, 'verify'])
+        ->name('api.verify.ticket');
+});
+
 
 // Basic landing pages
 Route::get('/', [LandingController::class, 'home'])->name('home');

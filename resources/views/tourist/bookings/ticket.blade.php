@@ -206,6 +206,7 @@
                         <strong>{{ $booking->booking_code }}</strong>
                     </div>
                 </div>
+
             </div>
         </div>
 
