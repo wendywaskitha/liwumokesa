@@ -43,6 +43,9 @@
     <!-- Footer -->
     @include('partials.landing._footer')
 
+    <!-- Modals Container -->
+    @stack('modals')
+
     <!-- jQuery first, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 

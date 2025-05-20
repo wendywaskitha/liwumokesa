@@ -4,16 +4,11 @@
 
 @section('content')
     <!-- Hero Section -->
-    <section class="position-relative">
+    <section class="hero-section position-relative">
         @if ($package->featured_image)
-            <img src="{{ asset('storage/' . $package->featured_image) }}" alt="{{ $package->name }}" class="w-100"
-                style="height: 60vh; object-fit: cover;">
-
-            <div class="top-0 position-absolute start-0 w-100 h-100"
-                style="background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));">
-            </div>
+            <img src="{{ asset('storage/' . $package->featured_image) }}" alt="{{ $package->name }}" class="w-100 hero-image">
         @else
-            <div class="bg-light w-100 d-flex align-items-center justify-content-center" style="height: 60vh;">
+            <div class="bg-light w-100 d-flex align-items-center justify-content-center hero-image">
                 <div class="text-center text-muted">
                     <i class="bi bi-image display-1"></i>
                     <p class="mt-2">Gambar belum tersedia</p>
@@ -21,14 +16,17 @@
             </div>
         @endif
 
-        <!-- Content overlay -->
-        <div class="bottom-0 p-4 text-white position-absolute start-0 w-100">
+        <!-- Hero Overlay -->
+        <div class="hero-overlay"></div>
+
+        <!-- Hero Content -->
+        <div class="hero-content">
             <div class="container">
                 <div class="row align-items-end">
                     <div class="col-lg-8">
                         <span class="mb-2 badge bg-primary">{{ $package->type_name }}</span>
-                        <h1 class="mb-2 display-4 fw-bold">{{ $package->name }}</h1>
-                        <div class="flex-wrap gap-3 d-flex align-items-center">
+                        <h1 class="mb-2 text-white display-4 fw-bold">{{ $package->name }}</h1>
+                        <div class="flex-wrap gap-3 text-white d-flex">
                             <div>
                                 <i class="bi bi-clock me-2"></i>
                                 {{ $package->duration_text }}
@@ -57,17 +55,17 @@
 
     <!-- Main Content -->
     <div class="container py-5">
-        <div class="row">
-            <!-- Sidebar - Pindahkan ke atas sebelum konten utama untuk mobile -->
-            <div class="mb-4 d-lg-none col-12">
+        <div class="row g-4">
+            <!-- Mobile Booking Card -->
+            <div class="col-12 d-lg-none">
                 @include('landing.partials.package-booking-card')
             </div>
 
             <!-- Main Content -->
             <div class="col-lg-8">
-                <!-- Description -->
-                <div class="mb-4 border-0 shadow-sm card rounded-3">
-                    <div class="card-body">
+                <!-- Package Description -->
+                <div class="mb-4 border-0 shadow-sm card rounded-4">
+                    <div class="p-4 card-body">
                         <h2 class="mb-4 h5">Tentang Paket</h2>
                         <div class="prose">
                             {!! $package->description !!}
@@ -75,10 +73,10 @@
                     </div>
                 </div>
 
-                <!-- Itinerary -->
+                <!-- Package Itinerary -->
                 @if ($package->itinerary)
-                    <div class="mb-4 border-0 shadow-sm card rounded-3">
-                        <div class="card-body">
+                    <div class="mb-4 border-0 shadow-sm card rounded-4">
+                        <div class="p-4 card-body">
                             <h2 class="mb-4 h5">Itinerary</h2>
                             <div class="timeline">
                                 @php
@@ -91,26 +89,18 @@
                                     <div class="mb-4 timeline-item">
                                         <div class="timeline-marker"></div>
                                         <div class="timeline-content">
-                                            <div class="p-3 bg-light rounded-3">
+                                            <div class="p-4 bg-light rounded-4">
                                                 <h5 class="mb-3 fw-bold text-primary">
                                                     Hari {{ is_numeric($day) ? $day + 1 : $day }}
                                                 </h5>
                                                 <div class="ps-2">
                                                     @if (is_array($activities))
                                                         <div class="activity-item">
-                                                            <div class="d-flex">
-                                                                <div class="flex-grow-1">
-                                                                    {{ $activities['title'] ?? $activities }}
-                                                                </div>
-                                                            </div>
+                                                            {{ $activities['title'] ?? $activities }}
                                                         </div>
                                                     @else
                                                         <div class="activity-item">
-                                                            <div class="d-flex">
-                                                                <div class="flex-grow-1">
-                                                                    {{ $activities }}
-                                                                </div>
-                                                            </div>
+                                                            {{ $activities }}
                                                         </div>
                                                     @endif
                                                 </div>
@@ -123,9 +113,9 @@
                     </div>
                 @endif
 
-                <!-- Inclusions & Exclusions -->
-                <div class="mb-4 border-0 shadow-sm card rounded-3">
-                    <div class="card-body">
+                <!-- Package Details -->
+                <div class="border-0 shadow-sm card rounded-4">
+                    <div class="p-4 card-body">
                         <div class="row">
                             <!-- Inclusions -->
                             @if ($package->inclusions)
@@ -144,16 +134,14 @@
                                         @foreach ($inclusions ?? [] as $key => $value)
                                             <li class="mb-3">
                                                 <div class="d-flex">
-                                                    <div class="flex-shrink-0">
-                                                        <i class="bi bi-check text-success"></i>
-                                                    </div>
-                                                    <div class="flex-grow-1 ms-3">
+                                                    <i class="bi bi-check text-success me-2"></i>
+                                                    <span>
                                                         @if (is_array($value))
                                                             {{ $value['description'] ?? ($value['item'] ?? '') }}
                                                         @else
                                                             {{ is_string($key) && !is_numeric($key) ? $value : $key }}
                                                         @endif
-                                                    </div>
+                                                    </span>
                                                 </div>
                                             </li>
                                         @endforeach
@@ -178,16 +166,14 @@
                                         @foreach ($exclusions ?? [] as $key => $value)
                                             <li class="mb-3">
                                                 <div class="d-flex">
-                                                    <div class="flex-shrink-0">
-                                                        <i class="bi bi-x text-danger"></i>
-                                                    </div>
-                                                    <div class="flex-grow-1 ms-3">
+                                                    <i class="bi bi-x text-danger me-2"></i>
+                                                    <span>
                                                         @if (is_array($value))
                                                             {{ $value['description'] ?? ($value['item'] ?? '') }}
                                                         @else
                                                             {{ is_string($key) && !is_numeric($key) ? $value : $key }}
                                                         @endif
-                                                    </div>
+                                                    </span>
                                                 </div>
                                             </li>
                                         @endforeach
@@ -199,7 +185,7 @@
                 </div>
             </div>
 
-            <!-- Sidebar - Desktop -->
+            <!-- Desktop Booking Card -->
             <div class="col-lg-4 d-none d-lg-block">
                 <div class="sticky-top" style="top: 2rem;">
                     @include('landing.partials.package-booking-card')
@@ -207,11 +193,40 @@
             </div>
         </div>
     </div>
+
+    @include('landing.partials.modals.booking-modal')
 @endsection
 
 @push('styles')
     <style>
-        /* Timeline Styles */
+        /* Hero Section */
+        .hero-section {
+            margin-top: -2rem;
+        }
+
+        .hero-image {
+            height: 60vh;
+            object-fit: cover;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.7));
+        }
+
+        .hero-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem 0;
+        }
+
+        /* Timeline */
         .timeline {
             position: relative;
             padding-left: 3rem;
@@ -227,9 +242,9 @@
             width: 16px;
             height: 16px;
             border-radius: 50%;
-            background: #0d6efd;
+            background: var(--bs-primary);
             border: 3px solid #fff;
-            box-shadow: 0 0 0 3px #0d6efd;
+            box-shadow: 0 0 0 3px var(--bs-primary);
         }
 
         .timeline-item:not(:last-child)::before {
@@ -239,7 +254,52 @@
             top: 16px;
             height: calc(100% + 1rem);
             width: 2px;
-            background: #0d6efd;
+            background: var(--bs-primary);
+        }
+
+        /* Card Styles */
+        .card {
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-image {
+                height: 50vh;
+            }
+        }
+
+        /* Modal z-index fixes */
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+
+        .modal {
+            z-index: 1045 !important;
+        }
+
+        .modal-dialog {
+            z-index: 1046 !important;
+        }
+
+        .sticky-top {
+            z-index: 1020 !important;
         }
     </style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap modal
+    const modalElement = document.getElementById('bookingModal-{{ $package->id }}');
+    if (modalElement) {
+        const modal = new bootstrap.Modal(modalElement);
+    }
+});
+</script>
 @endpush
