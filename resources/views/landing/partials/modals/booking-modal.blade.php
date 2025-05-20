@@ -1,5 +1,5 @@
 {{-- resources/views/landing/partials/modals/booking-modal.blade.php --}}
-<div class="modal fade"
+<div class="modal"
      id="bookingModal{{ $package->id }}"
      tabindex="-1"
      role="dialog"

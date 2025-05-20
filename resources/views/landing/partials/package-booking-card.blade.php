@@ -31,9 +31,7 @@
             @auth
                 <button type="button"
                         class="btn btn-primary"
-                        data-bs-toggle="modal"
-                        data-bs-target="#bookingModal{{ $package->id }}"
-                        aria-controls="bookingModal{{ $package->id }}">
+                        onclick="openBookingModal('{{ $package->id }}')">
                     <i class="bi bi-calendar-check me-2"></i>
                     Pesan Sekarang
                 </button>
