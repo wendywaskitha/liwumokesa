@@ -194,7 +194,9 @@
         </div>
     </div>
 
-    @include('landing.partials.modals.booking-modal')
+    @auth
+        @include('landing.partials.modals.booking-modal', ['package' => $package])
+    @endauth
 @endsection
 
 @push('styles')
@@ -293,13 +295,42 @@
 @endpush
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Bootstrap modal
-    const modalElement = document.getElementById('bookingModal-{{ $package->id }}');
-    if (modalElement) {
-        const modal = new bootstrap.Modal(modalElement);
-    }
-});
-</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle modal focus management
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.addEventListener('shown.bs.modal', function() {
+                    // Set focus to first focusable element
+                    const firstFocusable = modal.querySelector(
+                        'button, [href], input, select, textarea');
+                    if (firstFocusable) {
+                        firstFocusable.focus();
+                    }
+                });
+
+                // Prevent focus from leaving modal
+                modal.addEventListener('keydown', function(e) {
+                    if (e.key === 'Tab') {
+                        const focusableElements = modal.querySelectorAll(
+                            'button, [href], input, select, textarea');
+                        const firstFocusable = focusableElements[0];
+                        const lastFocusable = focusableElements[focusableElements.length - 1];
+
+                        if (e.shiftKey) {
+                            if (document.activeElement === firstFocusable) {
+                                lastFocusable.focus();
+                                e.preventDefault();
+                            }
+                        } else {
+                            if (document.activeElement === lastFocusable) {
+                                firstFocusable.focus();
+                                e.preventDefault();
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 @endpush

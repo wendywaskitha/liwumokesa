@@ -29,7 +29,11 @@
         <!-- Booking Buttons -->
         <div class="gap-2 mb-4 d-grid">
             @auth
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookingModal-{{ $package->id }}">
+                <button type="button"
+                        class="btn btn-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#bookingModal{{ $package->id }}"
+                        aria-controls="bookingModal{{ $package->id }}">
                     <i class="bi bi-calendar-check me-2"></i>
                     Pesan Sekarang
                 </button>
@@ -40,26 +44,26 @@
                 </a>
             @endauth
 
-            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $package->contact_phone ?? '') }}?text=Halo, saya tertarik dengan paket wisata {{ $package->name }}"
-                class="btn btn-success"
-                target="_blank">
+            <!-- WhatsApp button -->
+            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $package->contact_phone ?? '') }}"
+                class="btn btn-success" target="_blank">
                 <i class="bi bi-whatsapp me-2"></i>
                 Hubungi via WhatsApp
             </a>
         </div>
 
         <!-- Facilities -->
-        @if($package->facilities)
+        @if ($package->facilities)
             <div class="facilities">
                 <h6 class="mb-3">Fasilitas:</h6>
                 <div class="row g-2">
-                    @foreach($package->facilities as $facility)
-                    <div class="col-6">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            <span>{{ $facility }}</span>
+                    @foreach ($package->facilities as $facility)
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span>{{ $facility }}</span>
+                            </div>
                         </div>
-                    </div>
                     @endforeach
                 </div>
             </div>
