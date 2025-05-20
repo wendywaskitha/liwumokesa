@@ -275,62 +275,76 @@
             }
         }
 
-        /* Modal z-index fixes */
-        .modal-backdrop {
-            z-index: 1040 !important;
+        /* Modal Styles */
+        .modal {
+            z-index: 1055 !important;
         }
 
-        .modal {
-            z-index: 1045 !important;
+        .modal-backdrop {
+            z-index: 1050 !important;
         }
 
         .modal-dialog {
-            z-index: 1046 !important;
+            z-index: 1056 !important;
+            margin: 1.75rem auto;
         }
 
-        .sticky-top {
-            z-index: 1020 !important;
+        .modal-content {
+            position: relative;
+            background-color: #fff;
+            border-radius: 0.5rem;
+        }
+
+        /* Fix untuk desktop */
+        @media (min-width: 992px) {
+            .modal-dialog {
+                max-width: 500px;
+            }
+
+            .modal.show {
+                display: block !important;
+            }
+
+            .modal-backdrop.show {
+                opacity: 0.5;
+            }
+
+            .modal-open {
+                overflow: hidden;
+                padding-right: 0 !important;
+            }
         }
     </style>
 @endpush
 
 @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle modal focus management
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                modal.addEventListener('shown.bs.modal', function() {
-                    // Set focus to first focusable element
-                    const firstFocusable = modal.querySelector(
-                        'button, [href], input, select, textarea');
-                    if (firstFocusable) {
-                        firstFocusable.focus();
-                    }
-                });
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap modal
+    const modalElement = document.getElementById('bookingModal{{ $package->id }}');
+    if (modalElement) {
+        const modal = new bootstrap.Modal(modalElement, {
+            backdrop: 'static',
+            keyboard: false
+        });
 
-                // Prevent focus from leaving modal
-                modal.addEventListener('keydown', function(e) {
-                    if (e.key === 'Tab') {
-                        const focusableElements = modal.querySelectorAll(
-                            'button, [href], input, select, textarea');
-                        const firstFocusable = focusableElements[0];
-                        const lastFocusable = focusableElements[focusableElements.length - 1];
-
-                        if (e.shiftKey) {
-                            if (document.activeElement === firstFocusable) {
-                                lastFocusable.focus();
-                                e.preventDefault();
-                            }
-                        } else {
-                            if (document.activeElement === lastFocusable) {
-                                firstFocusable.focus();
-                                e.preventDefault();
-                            }
-                        }
-                    }
-                });
+        // Handle modal trigger button
+        const modalTriggers = document.querySelectorAll('[data-bs-target="#bookingModal{{ $package->id }}"]');
+        modalTriggers.forEach(trigger => {
+            trigger.addEventListener('click', function() {
+                modal.show();
             });
         });
-    </script>
+
+        // Handle modal close
+        modalElement.addEventListener('hidden.bs.modal', function() {
+            document.body.classList.remove('modal-open');
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+        });
+    }
+});
+</script>
 @endpush
