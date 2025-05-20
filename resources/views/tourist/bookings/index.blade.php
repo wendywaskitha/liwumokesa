@@ -12,11 +12,16 @@
                 Filter Status
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Semua</a></li>
-                <li><a class="dropdown-item" href="#">Menunggu Pembayaran</a></li>
-                <li><a class="dropdown-item" href="#">Terkonfirmasi</a></li>
-                <li><a class="dropdown-item" href="#">Selesai</a></li>
-                <li><a class="dropdown-item" href="#">Dibatalkan</a></li>
+                <li><a class="dropdown-item {{ request('status') == '' ? 'active' : '' }}"
+                       href="{{ route('tourist.bookings.index') }}">Semua</a></li>
+                <li><a class="dropdown-item {{ request('status') == 'pending' ? 'active' : '' }}"
+                       href="{{ route('tourist.bookings.index', ['status' => 'pending']) }}">Menunggu Pembayaran</a></li>
+                <li><a class="dropdown-item {{ request('status') == 'confirmed' ? 'active' : '' }}"
+                       href="{{ route('tourist.bookings.index', ['status' => 'confirmed']) }}">Terkonfirmasi</a></li>
+                <li><a class="dropdown-item {{ request('status') == 'completed' ? 'active' : '' }}"
+                       href="{{ route('tourist.bookings.index', ['status' => 'completed']) }}">Selesai</a></li>
+                <li><a class="dropdown-item {{ request('status') == 'cancelled' ? 'active' : '' }}"
+                       href="{{ route('tourist.bookings.index', ['status' => 'cancelled']) }}">Dibatalkan</a></li>
             </ul>
         </div>
     </div>
@@ -25,13 +30,14 @@
     <div class="row g-3">
         @forelse($bookings as $booking)
         <div class="col-12">
-            <div class="card">
+            <div class="border-0 shadow-sm card">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <!-- Package Image -->
                         <div class="col-md-2">
-                            <img src="{{ asset('storage/' . $booking->travelPackage->image) }}"
+                            <img src="{{ asset('storage/' . $booking->travelPackage->featured_image) }}"
                                  class="rounded img-fluid"
+                                 style="object-fit: cover; height: 100px; width: 100%;"
                                  alt="{{ $booking->travelPackage->name }}">
                         </div>
 
@@ -39,6 +45,7 @@
                         <div class="col-md-7">
                             <h5 class="mb-1 card-title">{{ $booking->travelPackage->name }}</h5>
                             <p class="mb-1 text-muted">
+                                <i class="bi bi-ticket-perforated me-2"></i>
                                 Kode Booking: {{ $booking->booking_code }}
                             </p>
                             <p class="mb-1">
@@ -60,14 +67,32 @@
                             <div class="btn-group">
                                 <a href="{{ route('tourist.bookings.show', $booking) }}"
                                    class="btn btn-sm btn-primary">
+                                    <i class="bi bi-eye me-1"></i>
                                     Detail
                                 </a>
+
+                                @if($booking->booking_status === 'confirmed')
+                                    <a href="{{ route('tourist.bookings.download-ticket', $booking) }}"
+                                       class="btn btn-sm btn-success">
+                                        <i class="bi bi-download me-1"></i>
+                                        Tiket
+                                    </a>
+                                @endif
+
                                 @if($booking->booking_status === 'pending')
                                     <button type="button"
                                             class="btn btn-sm btn-danger"
                                             onclick="confirmCancel('{{ $booking->id }}')">
+                                        <i class="bi bi-x-circle me-1"></i>
                                         Batalkan
                                     </button>
+                                    <form id="cancel-form-{{ $booking->id }}"
+                                          action="{{ route('tourist.bookings.cancel', $booking) }}"
+                                          method="POST"
+                                          class="d-none">
+                                        @csrf
+                                        @method('PUT')
+                                    </form>
                                 @endif
                             </div>
                         </div>
@@ -87,6 +112,7 @@
                     Jelajahi paket wisata menarik dan mulai petualangan Anda!
                 </p>
                 <a href="{{ route('packages.index') }}" class="btn btn-primary">
+                    <i class="bi bi-compass me-2"></i>
                     Lihat Paket Wisata
                 </a>
             </div>

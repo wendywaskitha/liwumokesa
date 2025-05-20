@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
-use Barryvdh\DomPDF\PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\TravelPackage;
@@ -123,7 +123,8 @@ class BookingController extends Controller
             'generated_at' => Carbon::now()->format('d M Y H:i')
         ];
 
-        $pdf = PDF::loadView('tourist.bookings.ticket', $data);
+        // Gunakan Facade Pdf
+        $pdf = Pdf::loadView('tourist.bookings.ticket', $data);
 
         return $pdf->download('ticket-' . $booking->booking_code . '.pdf');
     }
