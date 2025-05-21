@@ -158,42 +158,34 @@ class LandingController extends Controller
             'district',
             'category',
             'reviews' => function($query) {
-                $query->where('status', 'approved')->orderBy('created_at', 'desc');
+                $query->where('status', 'approved')
+                    ->orderBy('created_at', 'desc');
             },
             'reviews.user',
             'galleries',
             'amenities',
         ])->where('slug', $slug)->firstOrFail();
 
-        // Mencatat kunjungan ke destinasi jika model Visit ada
-        if (class_exists('App\Models\Visit')) {
-            \App\Models\Visit::recordDestinationVisit($destination->id, auth()->id());
+        // Validasi koordinat
+        if ($destination->latitude && $destination->longitude) {
+            // Get nearby destinations within 5km radius
+            $nearbyDestinations = Destination::select([
+                    'id', 'name', 'slug', 'featured_image',
+                    'latitude', 'longitude', 'category_id'
+                ])
+                ->with(['category'])
+                ->where('id', '!=', $destination->id)
+                ->where('status', true)
+                ->whereNotNull('latitude')
+                ->whereNotNull('longitude')
+                ->get();
+        } else {
+            $nearbyDestinations = collect();
         }
-
-        // Mendapatkan destinasi terdekat
-        $nearbyDestinations = Destination::with('district')
-            ->where('district_id', $destination->district_id)
-            ->where('id', '!=', $destination->id)
-            ->inRandomOrder()
-            ->take(3)
-            ->get();
-
-        // Mendapatkan akomodasi terdekat jika ada
-        $nearbyAccommodations = Accommodation::with('district')
-            ->where('district_id', $destination->district_id)
-            ->take(3)
-            ->get();
-
-        // Cek apakah destinasi ini termasuk dalam paket wisata
-        $relatedPackages = TravelPackage::whereHas('destinations', function($query) use ($destination) {
-            $query->where('destinations.id', $destination->id);
-        })->take(2)->get();
 
         return view('landing.destination-single', compact(
             'destination',
-            'nearbyDestinations',
-            'nearbyAccommodations',
-            'relatedPackages'
+            'nearbyDestinations'
         ));
     }
 
