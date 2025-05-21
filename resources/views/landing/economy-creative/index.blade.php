@@ -24,38 +24,65 @@
         </div>
     </div>
 
-    <!-- Products Grid -->
+    <!-- Creative Economy Grid -->
     <div class="row g-4">
-        @forelse($products as $product)
+        @forelse($creativeEconomies as $creativeEconomy)
             <div class="col-6 col-md-3">
                 <div class="border-0 shadow-sm card h-100 product-card">
                     <div class="position-relative">
-                        <img src="{{ asset('storage/' . $product->featured_image) }}"
+                        @php
+                            $pexelsImages = [
+                                'handicraft' => 'https://images.pexels.com/photos/4553036/pexels-photo-4553036.jpeg',
+                                'fashion' => 'https://images.pexels.com/photos/3735641/pexels-photo-3735641.jpeg',
+                                'food' => 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg',
+                                'art' => 'https://images.pexels.com/photos/1509534/pexels-photo-1509534.jpeg'
+                            ];
+                            $defaultImage = $pexelsImages[$creativeEconomy->category->slug] ?? 'https://images.pexels.com/photos/3735641/pexels-photo-3735641.jpeg';
+                        @endphp
+                        <img src="{{ $creativeEconomy->featured_image ? asset('storage/' . $creativeEconomy->featured_image) : $defaultImage }}"
                              class="card-img-top"
-                             alt="{{ $product->name }}"
+                             alt="{{ $creativeEconomy->name }}"
                              style="height: 200px; object-fit: cover;">
-                        @if($product->is_featured)
+
+                        @if($creativeEconomy->is_featured)
                             <div class="top-0 m-2 position-absolute start-0">
                                 <span class="badge bg-danger">Unggulan</span>
                             </div>
                         @endif
+                        @if($creativeEconomy->is_verified)
+                            <div class="top-0 m-2 position-absolute end-0">
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Terverifikasi
+                                </span>
+                            </div>
+                        @endif
                     </div>
                     <div class="card-body">
-                        <h6 class="mb-1 card-title text-truncate">{{ $product->name }}</h6>
-                        <p class="mb-2 text-muted small">{{ $product->category->name }}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold text-primary">
-                                Rp {{ number_format($product->price, 0, ',', '.') }}
+                        <h6 class="mb-1 card-title text-truncate">{{ $creativeEconomy->name }}</h6>
+                        <p class="mb-2 text-muted small">{{ $creativeEconomy->category->name }}</p>
+                        <div class="mb-2 d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">
+                                <i class="bi bi-tag me-1"></i>
+                                {{ $creativeEconomy->price_range_text }}
                             </span>
                             <small class="text-muted">
                                 <i class="bi bi-star-fill text-warning"></i>
-                                {{ number_format($product->average_rating, 1) }}
+                                {{ number_format($creativeEconomy->average_rating, 1) }}
                             </small>
                         </div>
+                        @if($creativeEconomy->has_workshop)
+                            <div class="mb-2">
+                                <span class="badge bg-info">
+                                    <i class="bi bi-tools me-1"></i>
+                                    Workshop Tersedia
+                                </span>
+                            </div>
+                        @endif
                     </div>
                     <div class="bg-white border-0 card-footer">
                         <div class="d-grid">
-                            <a href="{{ route('economy-creative.show', $product) }}"
+                            <a href="{{ route('economy-creative.show', $creativeEconomy->slug) }}"
                                class="btn btn-outline-primary btn-sm">
                                 Lihat Detail
                             </a>
@@ -66,13 +93,13 @@
         @empty
             <div class="col-12">
                 <div class="py-5 text-center">
-                    <img src="{{ asset('images/empty-product.svg') }}"
-                         alt="Tidak ada produk"
-                         class="mb-3"
-                         style="max-width: 200px">
-                    <h5>Belum ada produk</h5>
+                    <img src="https://images.pexels.com/photos/3943746/pexels-photo-3943746.jpeg"
+                         alt="Tidak ada UMKM"
+                         class="mb-3 rounded"
+                         style="max-width: 300px">
+                    <h5>Belum ada UMKM</h5>
                     <p class="text-muted">
-                        Produk ekonomi kreatif akan segera ditambahkan
+                        Data UMKM ekonomi kreatif akan segera ditambahkan
                     </p>
                 </div>
             </div>
@@ -81,7 +108,7 @@
 
     <!-- Pagination -->
     <div class="mt-4">
-        {{ $products->links() }}
+        {{ $creativeEconomies->links() }}
     </div>
 </div>
 
@@ -92,6 +119,12 @@
     }
     .product-card:hover {
         transform: translateY(-5px);
+    }
+    .card-img-top {
+        transition: transform 0.3s;
+    }
+    .product-card:hover .card-img-top {
+        transform: scale(1.05);
     }
 </style>
 @endpush

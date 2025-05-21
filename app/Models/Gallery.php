@@ -25,4 +25,9 @@ class Gallery extends Model
     {
         return $this->morphTo();
     }
+
+    public function getFilePathAttribute($value)
+    {
+        return str_replace('public/', '', $value);
+    }
 }

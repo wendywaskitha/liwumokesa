@@ -29,6 +29,7 @@ class GalleriesRelationManager extends RelationManager
                     ->disk('public')
                     ->directory('creative_economies/gallery')
                     ->columnSpanFull()
+                    ->visibility('public')
                     ->imageEditor(),
 
                 Forms\Components\TextInput::make('caption')

@@ -53,7 +53,7 @@ Route::get('/culinary/{slug}', [LandingController::class, 'showCulinary'])->name
 Route::get('economy-creative', [EconomyCreativeController::class, 'index'])
     ->name('economy-creative.index');
 
-Route::get('economy-creative/{product:slug}', [EconomyCreativeController::class, 'show'])
+Route::get('economy-creative/{creativeEconomy:slug}', [EconomyCreativeController::class, 'show'])
     ->name('economy-creative.show');
 
 // Cultural Heritage

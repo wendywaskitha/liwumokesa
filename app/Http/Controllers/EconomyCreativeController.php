@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\CreativeEconomy; // Ganti dari Product ke CreativeEconomy
+use App\Models\CreativeEconomy;
 use Illuminate\Http\Request;
 
 class EconomyCreativeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = CreativeEconomy::with(['category', 'reviews'])
-            ->where('status', true) // Hanya tampilkan yang aktif
+        $query = CreativeEconomy::with(['category', 'reviews', 'products'])
+            ->where('status', true)
             ->when($request->category, function($q, $category) {
                 return $q->whereHas('category', function($q) use ($category) {
                     $q->where('slug', $category);
@@ -42,23 +42,35 @@ class EconomyCreativeController extends Controller
             $query->latest();
         }
 
-        $products = $query->paginate(12)->withQueryString();
+        $creativeEconomies = $query->paginate(12)->withQueryString();
         $categories = Category::where('type', 'economy_creative')->get();
 
-        return view('landing.economy-creative.index', compact('products', 'categories'));
+        return view('landing.economy-creative.index', compact('creativeEconomies', 'categories'));
     }
 
-    public function show(CreativeEconomy $product)
+    public function show(CreativeEconomy $creativeEconomy) // Ubah parameter name
     {
-        $product->load(['category', 'galleries', 'reviews.user']);
+        $creativeEconomy->load([
+            'category',
+            'galleries',
+            'reviews.user',
+            'products' => function($query) {
+                $query->where('status', true)
+                    ->orderBy('is_featured', 'desc')
+                    ->orderBy('created_at', 'desc');
+            }
+        ]);
 
-        // Get similar products
-        $similarProducts = CreativeEconomy::where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
+        // Get similar creative economies
+        $similarCreativeEconomies = CreativeEconomy::where('category_id', $creativeEconomy->category_id)
+            ->where('id', '!=', $creativeEconomy->id)
             ->where('status', true)
             ->take(4)
             ->get();
 
-        return view('landing.economy-creative.show', compact('product', 'similarProducts'));
+        return view('landing.economy-creative.show', compact(
+            'creativeEconomy',
+            'similarCreativeEconomies'
+        ));
     }
 }
