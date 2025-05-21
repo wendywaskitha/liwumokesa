@@ -124,6 +124,100 @@
                         </div>
                     @endif
 
+                    <!-- Facilities Section -->
+                    <div class="mb-4 border-0 shadow-sm card rounded-3">
+                        <div class="card-body">
+                            <h2 class="mb-4 h5">Fasilitas</h2>
+
+                            @php
+                                // Decode facilities dari JSON
+                                $facilitiesData = json_decode($destination->facilities, true) ?? [];
+                            @endphp
+
+                            @if (!empty($facilitiesData))
+                                <div class="row g-3">
+                                    @foreach ($facilitiesData as $facility)
+                                        <div class="col-md-6">
+                                            <div class="p-3 rounded d-flex align-items-center bg-light">
+                                                <div class="flex-shrink-0">
+                                                    @php
+                                                        $icons = [
+                                                            'parkir' => 'bi bi-p-square',
+                                                            'toilet' => 'bi bi-badge-wc',
+                                                            'wifi' => 'bi bi-wifi',
+                                                            'restoran' => 'bi bi-cup-hot',
+                                                            'musholla' => 'bi bi-building',
+                                                            'atm' => 'bi bi-credit-card',
+                                                            'souvenir' => 'bi bi-bag',
+                                                            'taman' => 'bi bi-tree',
+                                                            'camping' => 'bi bi-house',
+                                                            'gazebo' => 'bi bi-umbrella',
+                                                            'default' => 'bi bi-check-circle',
+                                                        ];
+
+                                                        $facilityName = strtolower($facility['name'] ?? '');
+                                                        $icon = $icons[$facilityName] ?? $icons['default'];
+                                                    @endphp
+                                                    <i class="{{ $icon }} text-primary fs-4"></i>
+                                                </div>
+                                                <div class="ms-3">
+                                                    <h6 class="mb-1">{{ $facility['name'] ?? '' }}</h6>
+                                                    @if (!empty($facility['description']))
+                                                        <small class="text-muted">{{ $facility['description'] }}</small>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="py-4 text-center">
+                                    <div class="text-muted">
+                                        <i class="bi bi-info-circle display-4"></i>
+                                        <p class="mt-2">Informasi fasilitas belum tersedia</p>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- Additional Info -->
+                            @if ($destination->visiting_hours || $destination->entrance_fee)
+                                <div class="pt-4 mt-4 border-top">
+                                    <div class="row g-3">
+                                        @if ($destination->visiting_hours)
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-shrink-0">
+                                                        <i class="bi bi-clock text-primary fs-4"></i>
+                                                    </div>
+                                                    <div class="ms-3">
+                                                        <h6 class="mb-1">Jam Kunjungan</h6>
+                                                        <p class="mb-0">{{ $destination->visiting_hours }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+
+                                        @if ($destination->entrance_fee)
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-shrink-0">
+                                                        <i class="bi bi-ticket-perforated text-primary fs-4"></i>
+                                                    </div>
+                                                    <div class="ms-3">
+                                                        <h6 class="mb-1">Tiket Masuk</h6>
+                                                        <p class="mb-0">Rp
+                                                            {{ number_format($destination->entrance_fee, 0, ',', '.') }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
 
                     <!-- Reviews -->
                     <div class="border-0 shadow-sm card rounded-3">
@@ -147,7 +241,8 @@
                                         <div class="mb-2 d-flex justify-content-between">
                                             <div class="d-flex align-items-center">
                                                 <img src="{{ $review->user->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($review->user->name) }}"
-                                                    alt="{{ $review->user->name }}" class="rounded-circle" width="40">
+                                                    alt="{{ $review->user->name }}" class="rounded-circle"
+                                                    width="40">
                                                 <div class="ms-3">
                                                     <h6 class="mb-0">{{ $review->user->name }}</h6>
                                                     <small
