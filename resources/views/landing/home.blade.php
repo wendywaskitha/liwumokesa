@@ -59,7 +59,8 @@
     @include('partials.landing._travel-packages')
 
     <!-- Creative Economy Section -->
-    {{-- @include('partials.landing._economy-creative') --}}
+    @include('partials.landing._creative-economy')
+
 
     <!-- Upcoming Events -->
     @include('partials.landing._upcoming-events')

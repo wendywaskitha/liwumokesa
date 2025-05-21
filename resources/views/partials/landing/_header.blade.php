@@ -37,6 +37,13 @@
                             Event
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('economy-creative*') ? 'active' : '' }}"
+                           href="{{ route('economy-creative.index') }}">
+                            Ekonomi Kreatif
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('about') ? 'active' : '' }}"
                            href="{{ route('about') }}">

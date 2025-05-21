@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Destination;
-use App\Models\TravelPackage;
-use App\Models\Event;
-use App\Models\Accommodation;
-use App\Models\District;
-use App\Models\Category;
-use App\Models\CulturalHeritage;
-use App\Models\Culinary;
-use App\Models\Setting;
-use App\Models\Review;
-use App\Models\NewsletterSubscriber;
-use App\Models\EventRegistration;
-use Carbon\Carbon;
 use PDF;
+use Carbon\Carbon;
+use App\Models\Event;
+use App\Models\Review;
+use App\Models\Product;
+use App\Models\Setting;
+use App\Models\Category;
+use App\Models\Culinary;
+use App\Models\District;
+use App\Models\Destination;
+use Illuminate\Http\Request;
+use App\Models\Accommodation;
+use App\Models\TravelPackage;
+use App\Models\CreativeEconomy;
+use App\Models\CulturalHeritage;
+use App\Models\EventRegistration;
+use App\Models\NewsletterSubscriber;
 
 class LandingController extends Controller
 {
@@ -43,6 +45,25 @@ class LandingController extends Controller
             ->take(4)
             ->get();
 
+        $creativeProducts = CreativeEconomy::with('category')
+            ->where('status', true)
+            ->where('is_featured', true)
+            ->latest()
+            ->take(8)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'name' => $item->name,
+                    'category' => $item->category->name,
+                    'price_range' => 'Rp ' . number_format($item->price_range_start, 0, ',', '.') . ' - ' .
+                                'Rp ' . number_format($item->price_range_end, 0, ',', '.'),
+                    'featured_image' => $item->featured_image,
+                    'rating' => $item->average_rating,
+                    'slug' => $item->slug,
+                    'is_verified' => $item->is_verified,
+                ];
+            });
+
         // Mengambil data review terbaru
         $latestReviews = Review::with(['user', 'reviewable'])
             ->where('status', 'approved')
@@ -63,7 +84,8 @@ class LandingController extends Controller
             'featuredPackages',
             'upcomingEvents',
             'latestReviews',
-            'stats'
+            'stats',
+            'creativeProducts'
         ));
     }
 

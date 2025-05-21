@@ -7,6 +7,7 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TouristController;
 use App\Http\Controllers\CreativeEconomyController;
+use App\Http\Controllers\EconomyCreativeController;
 use App\Http\Controllers\Tourist\DashboardController;
 
 Route::middleware(['auth'])->group(function () {
@@ -47,6 +48,13 @@ Route::get('/accommodations/{slug}', [LandingController::class, 'showAccommodati
 // Culinary
 Route::get('/culinary', [LandingController::class, 'culinaries'])->name('culinaries.index');
 Route::get('/culinary/{slug}', [LandingController::class, 'showCulinary'])->name('culinaries.show');
+
+// Economy Creative Routes
+Route::get('economy-creative', [EconomyCreativeController::class, 'index'])
+    ->name('economy-creative.index');
+
+Route::get('economy-creative/{product:slug}', [EconomyCreativeController::class, 'show'])
+    ->name('economy-creative.show');
 
 // Cultural Heritage
 Route::get('/cultural-heritages', [LandingController::class, 'culturalHeritages'])->name('cultural-heritages.index');
