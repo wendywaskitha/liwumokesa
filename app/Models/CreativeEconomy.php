@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Destination;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CreativeEconomy extends Model
 {
@@ -97,6 +98,14 @@ class CreativeEconomy extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function destinations()
+    {
+        return $this->belongsToMany(Destination::class, 'destination_creative_economy')
+            ->withPivot(['partnership_type', 'is_featured', 'notes', 'workshop_schedule', 'sort_order'])
+            ->orderBy('sort_order')
+            ->withTimestamps();
     }
 
     /**

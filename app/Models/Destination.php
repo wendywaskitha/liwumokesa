@@ -8,6 +8,7 @@ use App\Models\Culinary;
 use App\Models\TourGuide;
 use Illuminate\Support\Str;
 use App\Models\Transportation;
+use App\Models\CreativeEconomy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -68,6 +69,14 @@ class Destination extends Model
     {
         return $this->belongsToMany(Culinary::class, 'destination_culinary')
             ->withPivot(['service_type', 'is_recommended', 'notes', 'sort_order'])
+            ->orderBy('sort_order')
+            ->withTimestamps();
+    }
+
+    public function creativeEconomies()
+    {
+        return $this->belongsToMany(CreativeEconomy::class, 'destination_creative_economy')
+            ->withPivot(['partnership_type', 'is_featured', 'notes', 'workshop_schedule', 'sort_order'])
             ->orderBy('sort_order')
             ->withTimestamps();
     }
