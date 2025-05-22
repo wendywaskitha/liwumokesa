@@ -172,6 +172,11 @@ class LandingController extends Controller
             'reviews.user',
             'galleries',
             'amenities',
+            'accommodations', // Tambahkan ini
+            'accommodations.district', // Dan ini jika perlu district data
+            'culinaries',
+            'transportations',
+            'creativeEconomies',
         ])->where('slug', $slug)->firstOrFail();
 
         // Validasi koordinat

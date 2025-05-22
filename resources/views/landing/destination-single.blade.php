@@ -1,488 +1,601 @@
 @extends('layouts.landing')
 
-@section('title', $destination->name . ' - Pariwisata Muna Barat')
+@section('title', $destination->name . ' - Destinasi Wisata Muna Barat')
 
 @section('content')
-    <!-- Hero Section -->
-    <section class="position-relative">
-        @if ($destination->featured_image)
-            <img src="{{ asset('storage/destinations/' . basename($destination->featured_image)) }}"
-                alt="{{ $destination->name }}" class="w-100" style="height: 60vh; object-fit: cover;">
-
-            <!-- Optional: Add overlay gradient -->
-            <div class="top-0 position-absolute start-0 w-100 h-100"
-                style="background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));">
-            </div>
-        @else
-            <!-- Fallback image or placeholder -->
-            <div class="bg-light w-100 d-flex align-items-center justify-content-center" style="height: 60vh;">
-                <div class="text-center text-muted">
-                    <i class="bi bi-image display-1"></i>
-                    <p class="mt-2">Gambar belum tersedia</p>
-                </div>
-            </div>
-        @endif
-
-        <!-- Content overlay -->
-        <div class="bottom-0 p-4 text-white position-absolute start-0 w-100">
-            <div class="container">
-                <div class="row align-items-end">
-                    <div class="col-lg-8">
-                        @if ($destination->category)
-                            <span class="mb-2 badge bg-primary">{{ $destination->category->name }}</span>
-                        @endif
-                        <h1 class="mb-2 display-4 fw-bold">{{ $destination->name }}</h1>
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-geo-alt me-2"></i>
-                            <span>{{ $destination->district->name ?? $destination->address }}</span>
+    <!-- Sticky Header Info -->
+    <div class="bg-white sticky-top border-bottom" style="top: 56px; z-index: 1020;">
+        <div class="container">
+            <div class="py-3 row">
+                <div class="col-lg-8">
+                    <h1 class="mb-1 h4">{{ $destination->name }}</h1>
+                    <div class="gap-3 d-flex align-items-center small">
+                        <div>
+                            <i class="bi bi-geo-alt text-primary"></i>
+                            {{ $destination->district->name }}
                         </div>
-                    </div>
-                    <div class="mt-3 col-lg-4 text-lg-end mt-lg-0">
                         @if ($destination->reviews->count() > 0)
-                            <div class="mb-2 d-flex align-items-center justify-content-lg-end">
-                                <div class="me-2">
-                                    <div class="d-flex">
-                                        @for ($i = 1; $i <= 5; $i++)
-                                            @if ($i <= round($destination->reviews->avg('rating')))
-                                                <i class="bi bi-star-fill text-warning"></i>
-                                            @else
-                                                <i class="bi bi-star text-warning"></i>
-                                            @endif
-                                        @endfor
-                                    </div>
-                                </div>
-                                <span>
-                                    {{ number_format($destination->reviews->avg('rating'), 1) }}
-                                    ({{ $destination->reviews->count() }} ulasan)
-                                </span>
+                            <div>
+                                <i class="bi bi-star-fill text-warning"></i>
+                                {{ number_format($destination->reviews->avg('rating'), 1) }}
+                                <span class="text-muted">({{ $destination->reviews->count() }} ulasan)</span>
                             </div>
                         @endif
-                        <button class="btn btn-outline-light" onclick="window.history.back()">
-                            <i class="bi bi-arrow-left me-2"></i>Kembali
-                        </button>
                     </div>
+                </div>
+                <div class="mt-3 col-lg-4 text-lg-end mt-lg-0">
+                    <button class="btn btn-outline-primary btn-sm me-2">
+                        <i class="bi bi-share me-1"></i>Bagikan
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm">
+                        <i class="bi bi-heart me-1"></i>Simpan
+                    </button>
                 </div>
             </div>
         </div>
-    </section>
-
-
+    </div>
 
     <!-- Main Content -->
-    <section class="py-5">
+    <div class="py-4">
         <div class="container">
-            <div class="row">
-                <!-- Main Content -->
+            <div class="row g-4">
+                <!-- Left Column -->
                 <div class="col-lg-8">
-                    <!-- Description -->
-                    <div class="mb-4 border-0 shadow-sm card rounded-3">
-                        <div class="card-body">
-                            <h2 class="mb-4 h5">Tentang Destinasi</h2>
-                            <div class="prose">
-                                {!! $destination->description !!}
+                    <!-- Gallery Grid -->
+                    <div class="mb-4 position-relative">
+                        <div class="row g-2">
+                            <div class="col-md-8">
+                                <img src="{{ Storage::url($destination->featured_image) }}" class="rounded img-fluid w-100"
+                                    style="height: 400px; object-fit: cover;" alt="{{ $destination->name }}">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="row g-2">
+                                    @foreach ($destination->galleries->take(4) as $index => $gallery)
+                                        <div class="col-6 col-md-12">
+                                            <div class="position-relative">
+                                                <img src="{{ Storage::url($gallery->file_path) }}"
+                                                    class="rounded img-fluid w-100"
+                                                    style="height: 197px; object-fit: cover;"
+                                                    alt="{{ $gallery->caption ?? $destination->name }}">
+                                                @if ($index == 3 && $destination->galleries->count() > 4)
+                                                    <div
+                                                        class="top-0 bg-opacity-50 rounded position-absolute start-0 w-100 h-100 bg-dark d-flex align-items-center justify-content-center">
+                                                        <span
+                                                            class="text-white h5">+{{ $destination->galleries->count() - 4 }}
+                                                            foto</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
+                        <button class="bottom-0 m-3 btn btn-light position-absolute end-0" data-bs-toggle="modal"
+                            data-bs-target="#galleryModal">
+                            <i class="bi bi-images me-1"></i>Lihat semua foto
+                        </button>
                     </div>
 
-                    <!-- Gallery Section -->
-                    @if ($destination->galleries->isNotEmpty())
-                        <div class="mb-4 border-0 shadow-sm card rounded-3">
-                            <div class="card-body">
-                                <h2 class="mb-4 h5">Galeri Foto</h2>
-                                <div class="row g-3">
-                                    @foreach ($destination->galleries->sortBy('order') as $gallery)
-                                        <div class="col-md-4">
-                                            <a href="{{ asset('storage/' . $gallery->file_path) }}"
-                                                data-fslightbox="gallery" class="d-block gallery-item">
-                                                <div class="position-relative">
-                                                    <img src="{{ asset('storage/' . $gallery->file_path) }}"
-                                                        alt="{{ $gallery->caption ?? $destination->name }}"
-                                                        class="rounded img-fluid w-100"
-                                                        style="height: 200px; object-fit: cover;">
+                    <!-- Tabs Navigation -->
+                    <ul class="mb-4 nav nav-tabs" id="destinationTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="overview-tab" data-bs-toggle="tab" href="#overview">Overview</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="amenities-tab" data-bs-toggle="tab" href="#amenities">Fasilitas Umum</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="accommodations-tab" data-bs-toggle="tab"
+                                href="#accommodations">Akomodasi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="culinary-tab" data-bs-toggle="tab" href="#culinary">Kuliner</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="transportation-tab" data-bs-toggle="tab"
+                                href="#transportation">Transportasi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="creative-tab" data-bs-toggle="tab" href="#creative">Ekonomi Kreatif</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="reviews-tab" data-bs-toggle="tab" href="#reviews">Ulasan</a>
+                        </li>
+                    </ul>
 
-                                                    @if ($gallery->is_featured)
-                                                        <div class="top-0 m-2 position-absolute end-0">
-                                                            <span class="badge bg-warning">
-                                                                <i class="bi bi-star-fill"></i>
-                                                                Unggulan
-                                                            </span>
-                                                        </div>
-                                                    @endif
+                    <!-- Tabs Content -->
+                    <div class="tab-content" id="destinationTabContent">
+                        <!-- Overview Tab -->
+                        <div class="tab-pane fade show active" id="overview">
+                            <div class="border-0 shadow-sm card">
+                                <div class="card-body">
+                                    <h2 class="mb-4 h5">Tentang {{ $destination->name }}</h2>
+                                    <div class="prose">
+                                        {!! $destination->description !!}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                                    @if ($gallery->caption)
-                                                        <div
-                                                            class="bottom-0 p-2 position-absolute start-0 w-100 bg-gradient-dark">
-                                                            <small class="text-white">{{ $gallery->caption }}</small>
-                                                        </div>
-                                                    @endif
+                        <!-- Amenities Tab -->
+                        <div class="tab-pane fade" id="amenities">
+                            <div class="border-0 shadow-sm card">
+                                <div class="card-body">
+                                    <h2 class="mb-4 h5">Fasilitas Umum</h2>
+                                    @if ($destination->amenities->isNotEmpty())
+                                        <div class="row g-4">
+                                            @foreach ($destination->amenities->groupBy('type') as $type => $amenities)
+                                                <div class="col-md-6">
+                                                    <h6 class="mb-3">{{ $type }}</h6>
+                                                    <ul class="list-unstyled">
+                                                        @foreach ($amenities as $amenity)
+                                                            <li class="mb-2">
+                                                                <i
+                                                                    class="bi bi-{{ $amenity->icon ?? 'check-circle' }} text-primary me-2"></i>
+                                                                {{ $amenity->name }}
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
                                                 </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="py-4 text-center">
+                                            <i class="bi bi-info-circle display-4 text-muted"></i>
+                                            <p class="mt-2 text-muted">Belum ada data fasilitas umum</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Accommodations Tab -->
+                        <div class="tab-pane fade" id="accommodations">
+                            <div class="border-0 shadow-sm card">
+                                <div class="card-body">
+                                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                                        <h2 class="mb-0 h5">Akomodasi Terdekat</h2>
+                                        @if (optional($destination->accommodations)->isNotEmpty())
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-primary btn-sm dropdown-toggle"
+                                                    type="button" data-bs-toggle="dropdown">
+                                                    <i class="bi bi-funnel me-1"></i>Filter
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a class="dropdown-item" href="#"
+                                                            data-sort="distance">Jarak Terdekat</a></li>
+                                                    <li><a class="dropdown-item" href="#"
+                                                            data-sort="recommended">Rekomendasi</a></li>
+                                                    <li><a class="dropdown-item" href="#" data-sort="price">Harga
+                                                            Terendah</a></li>
+                                                </ul>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    @if (optional($destination->accommodations)->isNotEmpty())
+                                        <div class="row g-4" id="accommodationsList">
+                                            @foreach ($destination->accommodations->sortBy('pivot.distance') as $accommodation)
+                                                <div class="col-md-6"
+                                                    data-distance="{{ $accommodation->pivot->distance }}">
+                                                    <div class="card h-100 hover-shadow">
+                                                        @if ($accommodation->featured_image)
+                                                            <img src="{{ Storage::url($accommodation->featured_image) }}"
+                                                                class="card-img-top" alt="{{ $accommodation->name }}"
+                                                                style="height: 200px; object-fit: cover;">
+                                                        @endif
+                                                        <div class="card-body">
+                                                            <h5 class="card-title h6">{{ $accommodation->name }}</h5>
+                                                            <div class="mb-2 small text-muted">
+                                                                <i class="bi bi-geo-alt me-1"></i>
+                                                                {{ $accommodation->district->name }}
+                                                                <span class="ms-2">
+                                                                    <i class="bi bi-signpost-2 me-1"></i>
+                                                                    {{ number_format($accommodation->pivot->distance, 1) }}
+                                                                    km
+                                                                </span>
+                                                            </div>
+                                                            <div class="flex-wrap gap-2 mb-3 d-flex align-items-center">
+                                                                <span
+                                                                    class="badge bg-primary">{{ $accommodation->type }}</span>
+                                                                @if ($accommodation->pivot->is_recommended)
+                                                                    <span class="badge bg-success">
+                                                                        <i class="bi bi-star-fill me-1"></i>Rekomendasi
+                                                                    </span>
+                                                                @endif
+                                                                <span class="small text-muted">
+                                                                    Mulai Rp
+                                                                    {{ number_format($accommodation->price_range_start) }}
+                                                                </span>
+                                                            </div>
+                                                            @if ($accommodation->facilities)
+                                                                <div class="small text-muted">
+                                                                    <i class="bi bi-check-circle me-1"></i>
+                                                                    {{ implode(', ', $accommodation->facilities) }}
+                                                                </div>
+                                                            @endif
+                                                            @if ($accommodation->pivot->notes)
+                                                                <div class="mt-2 small text-muted">
+                                                                    <i class="bi bi-info-circle me-1"></i>
+                                                                    {{ $accommodation->pivot->notes }}
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                        <div class="bg-white card-footer border-top-0">
+                                                            <div class="d-grid">
+                                                                <a href="{{ route('accommodations.show', $accommodation->slug) }}"
+                                                                    class="btn btn-outline-primary btn-sm">
+                                                                    <i class="bi bi-info-circle me-1"></i>Lihat Detail
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="py-4 text-center">
+                                            <i class="bi bi-building display-4 text-muted"></i>
+                                            <p class="mt-2 text-muted">Belum ada data akomodasi terdekat</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Culinary Tab -->
+                        <div class="tab-pane fade" id="culinary">
+                            <div class="border-0 shadow-sm card">
+                                <div class="card-body">
+                                    <h2 class="mb-4 h5">Kuliner Terdekat</h2>
+                                    @if ($destination->culinaries->isNotEmpty())
+                                        <div class="row g-4">
+                                            @foreach ($destination->culinaries as $culinary)
+                                                <div class="col-md-6">
+                                                    <div class="card h-100">
+                                                        @if ($culinary->featured_image)
+                                                            <img src="{{ Storage::url($culinary->featured_image) }}"
+                                                                class="card-img-top" alt="{{ $culinary->name }}"
+                                                                style="height: 200px; object-fit: cover;">
+                                                        @endif
+                                                        <div class="card-body">
+                                                            <h5 class="card-title h6">{{ $culinary->name }}</h5>
+                                                            <div class="mb-2 small text-muted">
+                                                                <i
+                                                                    class="bi bi-geo-alt me-1"></i>{{ $culinary->district->name }}
+                                                            </div>
+                                                            <div class="flex-wrap gap-2 mb-3 d-flex align-items-center">
+                                                                <span
+                                                                    class="badge bg-primary">{{ $culinary->type }}</span>
+                                                                @if ($culinary->halal_certified)
+                                                                    <span class="badge bg-success">Halal</span>
+                                                                @endif
+                                                                @if ($culinary->has_vegetarian_option)
+                                                                    <span class="badge bg-info">Vegetarian</span>
+                                                                @endif
+                                                            </div>
+                                                            @if ($culinary->specialties)
+                                                                <div class="small text-muted">
+                                                                    <i class="bi bi-award me-1"></i>
+                                                                    Menu unggulan: {{ $culinary->specialties }}
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="py-4 text-center">
+                                            <i class="bi bi-cup-hot display-4 text-muted"></i>
+                                            <p class="mt-2 text-muted">Belum ada data kuliner terdekat</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transportation Tab -->
+                        <div class="tab-pane fade" id="transportation">
+                            <div class="border-0 shadow-sm card">
+                                <div class="card-body">
+                                    <h2 class="mb-4 h5">Transportasi Tersedia</h2>
+                                    @if ($destination->transportations->isNotEmpty())
+                                        <div class="row g-4">
+                                            @foreach ($destination->transportations as $transport)
+                                                <div class="col-md-6">
+                                                    <div class="card h-100">
+                                                        @if ($transport->featured_image)
+                                                            <img src="{{ Storage::url($transport->featured_image) }}"
+                                                                class="card-img-top" alt="{{ $transport->name }}"
+                                                                style="height: 200px; object-fit: cover;">
+                                                        @endif
+                                                        <div class="card-body">
+                                                            <h5 class="card-title h6">{{ $transport->name }}</h5>
+                                                            <div class="mb-2 small text-muted">
+                                                                <i
+                                                                    class="bi bi-geo-alt me-1"></i>{{ $transport->district->name }}
+                                                            </div>
+                                                            <div class="flex-wrap gap-2 mb-3 d-flex align-items-center">
+                                                                <span
+                                                                    class="badge bg-primary">{{ $transport->type }}</span>
+                                                                <span class="small text-muted">
+                                                                    Rp {{ number_format($transport->base_price) }}
+                                                                </span>
+                                                            </div>
+                                                            @if ($transport->pivot && $transport->pivot->route_notes)
+                                                                <div class="small text-muted">
+                                                                    <i class="bi bi-info-circle me-1"></i>
+                                                                    {{ $transport->pivot->route_notes }}
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="py-4 text-center">
+                                            <i class="bi bi-car-front display-4 text-muted"></i>
+                                            <p class="mt-2 text-muted">Belum ada data transportasi tersedia</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Creative Economy Tab -->
+                        <div class="tab-pane fade" id="creative">
+                            <div class="border-0 shadow-sm card">
+                                <div class="card-body">
+                                    <h2 class="mb-4 h5">Ekonomi Kreatif</h2>
+                                    @if ($destination->creativeEconomies->isNotEmpty())
+                                        <div class="row g-4">
+                                            @foreach ($destination->creativeEconomies as $creative)
+                                                <div class="col-md-6">
+                                                    <div class="card h-100">
+                                                        @if ($creative->featured_image)
+                                                            <img src="{{ Storage::url($creative->featured_image) }}"
+                                                                class="card-img-top" alt="{{ $creative->name }}"
+                                                                style="height: 200px; object-fit: cover;">
+                                                        @endif
+                                                        <div class="card-body">
+                                                            <h5 class="card-title h6">{{ $creative->name }}</h5>
+                                                            <div class="mb-2 small text-muted">
+                                                                <i
+                                                                    class="bi bi-geo-alt me-1"></i>{{ $creative->district->name }}
+                                                            </div>
+                                                            <div class="flex-wrap gap-2 mb-3 d-flex align-items-center">
+                                                                <span
+                                                                    class="badge bg-primary">{{ $creative->category->name }}</span>
+                                                                @if ($creative->has_workshop)
+                                                                    <span class="badge bg-info">Workshop Tersedia</span>
+                                                                @endif
+                                                            </div>
+                                                            @if ($creative->products_description)
+                                                                <div class="small text-muted">
+                                                                    <i class="bi bi-bag me-1"></i>
+                                                                    {{ $creative->products_description }}
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <div class="py-4 text-center">
+                                            <i class="bi bi-shop display-4 text-muted"></i>
+                                            <p class="mt-2 text-muted">Belum ada data ekonomi kreatif</p>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reviews Tab -->
+                        <div class="tab-pane fade" id="reviews">
+                            <div class="border-0 shadow-sm card">
+                                <div class="card-body">
+                                    <div class="mb-4 d-flex justify-content-between align-items-center">
+                                        <h2 class="mb-0 h5">Ulasan Pengunjung</h2>
+                                        @auth
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#reviewModal">
+                                                <i class="bi bi-pencil me-1"></i>Tulis Ulasan
+                                            </button>
+                                        @else
+                                            <a href="{{ route('login') }}" class="btn btn-primary btn-sm">
+                                                <i class="bi bi-box-arrow-in-right me-1"></i>Login untuk Menulis Ulasan
                                             </a>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- Facilities Section -->
-                    <div class="mb-4 border-0 shadow-sm card rounded-3">
-                        <div class="card-body">
-                            <h2 class="mb-4 h5">Fasilitas di Lakasi</h2>
-
-                            @php
-                                // Decode facilities dari JSON
-                                $facilitiesData = json_decode($destination->facilities, true) ?? [];
-                            @endphp
-
-                            @if (!empty($facilitiesData))
-                                <div class="row g-3">
-                                    @foreach ($facilitiesData as $facility)
-                                        <div class="col-md-6">
-                                            <div class="p-3 rounded d-flex align-items-center bg-light">
-                                                <div class="flex-shrink-0">
-                                                    @php
-                                                        $icons = [
-                                                            'parkir' => 'bi bi-p-square',
-                                                            'toilet' => 'bi bi-badge-wc',
-                                                            'wifi' => 'bi bi-wifi',
-                                                            'restoran' => 'bi bi-cup-hot',
-                                                            'musholla' => 'bi bi-building',
-                                                            'atm' => 'bi bi-credit-card',
-                                                            'souvenir' => 'bi bi-bag',
-                                                            'taman' => 'bi bi-tree',
-                                                            'camping' => 'bi bi-house',
-                                                            'gazebo' => 'bi bi-umbrella',
-                                                            'default' => 'bi bi-check-circle',
-                                                        ];
-
-                                                        $facilityName = strtolower($facility['name'] ?? '');
-                                                        $icon = $icons[$facilityName] ?? $icons['default'];
-                                                    @endphp
-                                                    <i class="{{ $icon }} text-primary fs-4"></i>
-                                                </div>
-                                                <div class="ms-3">
-                                                    <h6 class="mb-1">{{ $facility['name'] ?? '' }}</h6>
-                                                    @if (!empty($facility['description']))
-                                                        <small class="text-muted">{{ $facility['description'] }}</small>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <div class="py-4 text-center">
-                                    <div class="text-muted">
-                                        <i class="bi bi-info-circle display-4"></i>
-                                        <p class="mt-2">Informasi fasilitas belum tersedia</p>
+                                        @endauth
                                     </div>
-                                </div>
-                            @endif
 
-                            <!-- Additional Info -->
-                            @if ($destination->visiting_hours || $destination->entrance_fee)
-                                <div class="pt-4 mt-4 border-top">
-                                    <div class="row g-3">
-                                        @if ($destination->visiting_hours)
-                                            <div class="col-md-6">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-shrink-0">
-                                                        <i class="bi bi-clock text-primary fs-4"></i>
-                                                    </div>
-                                                    <div class="ms-3">
-                                                        <h6 class="mb-1">Jam Kunjungan</h6>
-                                                        <p class="mb-0">{{ $destination->visiting_hours }}</p>
-                                                    </div>
+                                    @if ($destination->reviews->isNotEmpty())
+                                        <div class="mb-4 row">
+                                            <div class="text-center col-md-4">
+                                                <div class="display-4 fw-bold text-primary">
+                                                    {{ number_format($destination->reviews->avg('rating'), 1) }}
+                                                </div>
+                                                <div class="mb-2">
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <i
+                                                            class="bi bi-star{{ $i <= round($destination->reviews->avg('rating')) ? '-fill' : '' }} text-warning"></i>
+                                                    @endfor
+                                                </div>
+                                                <div class="text-muted">
+                                                    {{ $destination->reviews->count() }} ulasan
                                                 </div>
                                             </div>
-                                        @endif
-
-                                        @if ($destination->entrance_fee)
-                                            <div class="col-md-6">
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-shrink-0">
-                                                        <i class="bi bi-ticket-perforated text-primary fs-4"></i>
+                                            <div class="col-md-8">
+                                                @php
+                                                    $ratings = $destination->reviews->groupBy('rating');
+                                                    $totalReviews = $destination->reviews->count();
+                                                @endphp
+                                                @for ($i = 5; $i >= 1; $i--)
+                                                    <div class="mb-2 d-flex align-items-center">
+                                                        <div class="text-muted small" style="width: 60px;">
+                                                            {{ $i }} bintang
+                                                        </div>
+                                                        <div class="mx-2 flex-grow-1">
+                                                            <div class="progress" style="height: 6px;">
+                                                                <div class="progress-bar bg-warning"
+                                                                    style="width: {{ ($ratings->get($i, collect())->count() / $totalReviews) * 100 }}%">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-muted small" style="width: 60px;">
+                                                            {{ $ratings->get($i, collect())->count() }}
+                                                        </div>
                                                     </div>
-                                                    <div class="ms-3">
-                                                        <h6 class="mb-1">Tiket Masuk</h6>
-                                                        <p class="mb-0">Rp
-                                                            {{ number_format($destination->entrance_fee, 0, ',', '.') }}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-
-                    <!-- Reviews -->
-                    <div class="border-0 shadow-sm card rounded-3">
-                        <div class="card-body">
-                            <div class="mb-4 d-flex justify-content-between align-items-center">
-                                <h2 class="mb-0 h5">Ulasan Pengunjung</h2>
-                                @auth
-                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#reviewModal">
-                                        Tulis Ulasan
-                                    </button>
-                                @else
-                                    <a href="{{ route('login') }}" class="btn btn-primary btn-sm">Login untuk Menulis
-                                        Ulasan</a>
-                                @endauth
-                            </div>
-
-                            @if ($destination->reviews->isNotEmpty())
-                                @foreach ($destination->reviews as $review)
-                                    <div class="pb-4 mb-4 border-bottom">
-                                        <div class="mb-2 d-flex justify-content-between">
-                                            <div class="d-flex align-items-center">
-                                                <img src="{{ $review->user->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($review->user->name) }}"
-                                                    alt="{{ $review->user->name }}" class="rounded-circle"
-                                                    width="40">
-                                                <div class="ms-3">
-                                                    <h6 class="mb-0">{{ $review->user->name }}</h6>
-                                                    <small
-                                                        class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex">
-                                                @for ($i = 1; $i <= 5; $i++)
-                                                    @if ($i <= $review->rating)
-                                                        <i class="bi bi-star-fill text-warning"></i>
-                                                    @else
-                                                        <i class="bi bi-star text-warning"></i>
-                                                    @endif
                                                 @endfor
                                             </div>
                                         </div>
-                                        <p class="mb-0">{{ $review->content }}</p>
-                                    </div>
-                                @endforeach
-                            @else
-                                <div class="py-4 text-center">
-                                    <i class="bi bi-chat-square-text display-4 text-muted"></i>
-                                    <p class="mt-2 text-muted">Belum ada ulasan untuk destinasi ini</p>
+
+                                        @foreach ($destination->reviews as $review)
+                                            <div class="pb-4 mb-4 border-bottom last:border-0 last:pb-0 last:mb-0">
+                                                <div class="d-flex">
+                                                    <img src="{{ $review->user->profile_photo_url }}"
+                                                        alt="{{ $review->user->name }}" class="rounded-circle me-3"
+                                                        width="48" height="48">
+                                                    <div class="flex-grow-1">
+                                                        <div
+                                                            class="mb-2 d-flex justify-content-between align-items-center">
+                                                            <h6 class="mb-0">{{ $review->user->name }}</h6>
+                                                            <small
+                                                                class="text-muted">{{ $review->created_at->diffForHumans() }}</small>
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            @for ($i = 1; $i <= 5; $i++)
+                                                                <i
+                                                                    class="bi bi-star{{ $i <= $review->rating ? '-fill' : '' }} text-warning"></i>
+                                                            @endfor
+                                                        </div>
+                                                        <p class="mb-0">{{ $review->comment }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <div class="py-4 text-center">
+                                            <i class="bi bi-chat-square-text display-4 text-muted"></i>
+                                            <p class="mt-2 text-muted">Belum ada ulasan untuk destinasi ini</p>
+                                        </div>
+                                    @endif
                                 </div>
-                            @endif
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Sidebar -->
+                <!-- Right Column -->
                 <div class="col-lg-4">
-                    <!-- Information Card -->
-                    <div class="mb-4 border-0 shadow-sm card rounded-3">
-                        <div class="card-body">
-                            <h2 class="mb-4 h5">Informasi</h2>
-
-                            @if ($destination->opening_hours)
-                                <div class="mb-3 d-flex align-items-center">
-                                    <i class="bi bi-clock text-primary me-3"></i>
-                                    <div>
-                                        <small class="text-muted d-block">Jam Buka</small>
-                                        <span>{{ $destination->opening_hours }}</span>
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if ($destination->ticket_price)
-                                <div class="mb-3 d-flex align-items-center">
-                                    <i class="bi bi-ticket-perforated text-primary me-3"></i>
-                                    <div>
-                                        <small class="text-muted d-block">Harga Tiket</small>
-                                        <span>Rp {{ number_format($destination->ticket_price, 0, ',', '.') }}</span>
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if ($destination->contact_phone)
-                                <div class="mb-3 d-flex align-items-center">
-                                    <i class="bi bi-telephone text-primary me-3"></i>
-                                    <div>
-                                        <small class="text-muted d-block">Telepon</small>
-                                        <span>{{ $destination->contact_phone }}</span>
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if ($destination->website)
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-globe text-primary me-3"></i>
-                                    <div>
-                                        <small class="text-muted d-block">Website</small>
-                                        <a href="{{ $destination->website }}" target="_blank"
-                                            class="text-decoration-none">
-                                            {{ $destination->website }}
-                                        </a>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Amenities -->
-                    @if ($destination->amenities && $destination->amenities->isNotEmpty())
-                        <div class="mb-4 border-0 shadow-sm card rounded-3">
+                    <!-- Map Card -->
+                    @if ($destination->latitude && $destination->longitude)
+                        <div class="mb-4 border-0 shadow-sm card">
                             <div class="card-body">
-                                <h2 class="mb-4 h5">Fasilitas</h2>
-                                <div class="row g-2">
-                                    @foreach ($destination->amenities as $amenity)
-                                        <div class="col-6">
-                                            <div class="d-flex align-items-center">
-                                                <i
-                                                    class="{{ $amenity->icon ?? 'bi bi-check-circle' }} text-primary me-2"></i>
-                                                <span>{{ $amenity->name }}</span>
-                                            </div>
-                                        </div>
-                                    @endforeach
+                                <h2 class="mb-4 h5">Lokasi</h2>
+                                <div id="map" class="mb-3 rounded" style="height: 300px;"></div>
+                                <div class="d-grid">
+                                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ $destination->latitude }},{{ $destination->longitude }}"
+                                        class="btn btn-primary" target="_blank">
+                                        <i class="bi bi-map me-2"></i>Petunjuk Arah
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     @endif
 
-                    <!-- Location Section -->
-                    <div class="mb-4 border-0 shadow-sm card rounded-3">
-                        <div class="card-body">
-                            <h2 class="mb-4 h5">Lokasi</h2>
-
-                            @if ($destination->latitude && $destination->longitude)
-                                <!-- Map Container -->
-                                <div id="mapDestination" class="mb-3 rounded" style="height: 400px;"></div>
-
-                                <!-- Location Details -->
-                                <div class="mt-3">
-                                    <p class="mb-2">
-                                        <i class="bi bi-geo-alt text-primary me-2"></i>
-                                        {{ $destination->address }}
-                                    </p>
-                                    @if ($destination->district)
-                                        <p class="mb-2">
-                                            <i class="bi bi-map text-primary me-2"></i>
-                                            Kecamatan {{ $destination->district->name }}
-                                        </p>
-                                    @endif
-                                    <p class="mb-0 text-muted small">
-                                        <i class="bi bi-info-circle me-2"></i>
-                                        Koordinat: {{ number_format($destination->latitude, 6) }},
-                                        {{ number_format($destination->longitude, 6) }}
-                                    </p>
-                                </div>
-
-                                <!-- Direction Button -->
-                                <div class="mt-3">
-                                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ $destination->latitude }},{{ $destination->longitude }}"
-                                        class="btn btn-outline-primary btn-sm" target="_blank">
-                                        <i class="bi bi-sign-turn-right me-2"></i>
-                                        Petunjuk Arah
-                                    </a>
-                                </div>
-                            @else
-                                <div class="py-5 text-center">
-                                    <div class="text-muted">
-                                        <i class="bi bi-map display-4"></i>
-                                        <p class="mt-2">Koordinat lokasi belum tersedia</p>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Related Tours -->
-                    @if (isset($relatedPackages) && $relatedPackages->isNotEmpty())
-                        <div class="border-0 shadow-sm card rounded-3">
+                    <!-- Related Cards -->
+                    @if (isset($destination->accommodations) && $destination->accommodations->isNotEmpty())
+                        <div class="mb-4 border-0 shadow-sm card">
                             <div class="card-body">
-                                <h2 class="mb-4 h5">Paket Wisata</h2>
-
-                                @foreach ($relatedPackages as $package)
-                                    <div class="d-flex mb-3 {{ !$loop->last ? 'border-bottom pb-3' : '' }}">
-                                        <div class="flex-shrink-0">
-                                            @if ($package->featured_image)
-                                                <img src="{{ asset('storage/destinations/' . $package->featured_image) }}"
-                                                    alt="{{ $package->name }}" class="rounded"
-                                                    style="width: 80px; height: 60px; object-fit: cover;">
-                                            @else
-                                                <div class="rounded bg-light" style="width: 80px; height: 60px;"></div>
-                                            @endif
-                                        </div>
-                                        <div class="flex-grow-1 ms-3">
-                                            <h6 class="mb-1">
-                                                <a href="{{ route('packages.show', $package->slug) }}"
-                                                    class="text-decoration-none text-dark">
-                                                    {{ $package->name }}
-                                                </a>
-                                            </h6>
-                                            <div class="mb-1 small text-muted">
-                                                <i class="bi bi-clock me-1"></i>{{ $package->duration }} Hari
-                                                @if ($package->destinations_count)
-                                                    <span class="mx-2">•</span>
-                                                    <i class="bi bi-geo-alt me-1"></i>{{ $package->destinations_count }}
-                                                    Destinasi
-                                                @endif
+                                <h2 class="mb-4 h5">Akomodasi Terdekat</h2>
+                                @foreach ($destination->accommodations as $accommodation)
+                                    <div class="pb-3 mb-3 d-flex border-bottom last:mb-0 last:pb-0 last:border-0">
+                                        <img src="{{ Storage::url($accommodation->featured_image) }}"
+                                            alt="{{ $accommodation->name }}" class="rounded me-3"
+                                            style="width: 80px; height: 80px; object-fit: cover;">
+                                        <div>
+                                            <h6 class="mb-1">{{ $accommodation->name }}</h6>
+                                            <div class="mb-2 small text-muted">
+                                                <i class="bi bi-geo-alt me-1"></i>{{ $accommodation->district->name }}
                                             </div>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <span class="small text-muted">Mulai dari</span>
-                                                    <span class="text-primary fw-bold">Rp
-                                                        {{ number_format($package->price, 0, ',', '.') }}</span>
-                                                </div>
-                                                @if ($package->availability === 'available')
-                                                    <span class="badge bg-success">Tersedia</span>
-                                                @elseif($package->availability === 'limited')
-                                                    <span class="badge bg-warning">Terbatas</span>
-                                                @else
-                                                    <span class="badge bg-danger">Penuh</span>
-                                                @endif
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-primary me-2">{{ $accommodation->type }}</span>
+                                                <span class="small text-muted">
+                                                    Mulai Rp {{ number_format($accommodation->price_range_start) }}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
                                 @endforeach
-
-                                <div class="mt-4 text-center">
-                                    <a href="{{ route('packages.index') }}" class="btn btn-outline-primary btn-sm">
-                                        Lihat Semua Paket Wisata
-                                        <i class="bi bi-arrow-right ms-1"></i>
-                                    </a>
-                                </div>
                             </div>
                         </div>
                     @endif
+
+                    <!-- Other related sections (Culinary, Transportation, etc.) follow the same pattern -->
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+
+    <!-- Gallery Modal -->
+    <div class="modal fade" id="galleryModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Galeri Foto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        @foreach ($destination->galleries as $gallery)
+                            <div class="col-md-4">
+                                <a href="{{ Storage::url($gallery->file_path) }}" data-fslightbox="gallery-modal">
+                                    <img src="{{ Storage::url($gallery->file_path) }}"
+                                        alt="{{ $gallery->caption ?? $destination->name }}"
+                                        class="rounded img-fluid w-100" style="height: 200px; object-fit: cover;">
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Review Modal -->
     @auth
         <div class="modal fade" id="reviewModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tulis Ulasan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
                     <form action="{{ route('reviews.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="reviewable_type" value="App\Models\Destination">
                         <input type="hidden" name="reviewable_id" value="{{ $destination->id }}">
 
-                        <div class="modal-header">
-                            <h5 class="modal-title">Tulis Ulasan</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label class="form-label">Rating</label>
-                                <div class="rating">
+                                <div class="rating-input">
                                     @for ($i = 5; $i >= 1; $i--)
                                         <input type="radio" name="rating" value="{{ $i }}"
-                                            id="rating{{ $i }}" required>
-                                        <label for="rating{{ $i }}">☆</label>
+                                            id="rating{{ $i }}">
+                                        <label for="rating{{ $i }}">
+                                            <i class="bi bi-star-fill"></i>
+                                        </label>
                                     @endfor
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Ulasan Anda</label>
-                                <textarea name="content" rows="4" class="form-control" required></textarea>
+                                <label class="form-label">Komentar</label>
+                                <textarea class="form-control" name="comment" rows="3" required></textarea>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -497,180 +610,70 @@
 @endsection
 
 @push('styles')
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-
-    <!-- MarkerCluster CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fslightbox/3.4.1/index.min.js"></script>
-
-    <!-- Custom Map Styles -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fslightbox@3.3.1/index.min.css">
     <style>
-        #mapDestination {
-            min-height: 400px;
-            width: 100%;
-            border-radius: 8px;
-        }
-
-        .map-popup-content {
-            text-align: center;
-            padding: 5px;
-        }
-
-        .map-popup-content img {
-            max-width: 150px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-bottom: 8px;
-        }
-
-        .leaflet-popup-content-wrapper {
-            border-radius: 8px;
-        }
-
-        .leaflet-popup-content {
-            margin: 13px;
-            min-width: 200px;
-        }
-
-        .rating {
+        .rating-input {
             display: flex;
             flex-direction: row-reverse;
             justify-content: flex-end;
         }
 
-        .rating input {
+        .rating-input input {
             display: none;
         }
 
-        .rating label {
+        .rating-input label {
             cursor: pointer;
-            font-size: 30px;
-            color: #ddd;
-            padding: 0 2px;
+            padding: 0 0.1em;
+            font-size: 1.5rem;
         }
 
-        .rating input:checked~label,
-        .rating label:hover,
-        .rating label:hover~label {
+        .rating-input label i {
+            color: #ddd;
+        }
+
+        .rating-input input:checked~label i {
             color: #ffc107;
         }
 
-        .bg-gradient-dark {
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
+        .rating-input label:hover i,
+        .rating-input label:hover~label i {
+            color: #ffc107;
         }
 
-        .gallery-item {
-            transition: all 0.3s ease;
-            overflow: hidden;
+        .prose {
+            line-height: 1.8;
         }
 
-        .gallery-item:hover {
-            transform: scale(1.02);
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 1rem;
         }
 
-        .gallery-item img {
-            transition: all 0.3s ease;
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-
-        .bg-gradient-dark {
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+        .nav-tabs .nav-link.active {
+            color: var(--bs-primary);
+            border-bottom-color: var(--bs-primary);
         }
     </style>
 @endpush
 
 @push('scripts')
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
-    <!-- MarkerCluster JS -->
-    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fslightbox@3.3.1/index.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mapContainer = document.getElementById('mapDestination');
+        // Initialize map
+        const map = L.map('map').setView([{{ $destination->latitude }}, {{ $destination->longitude }}], 15);
 
-            if (!mapContainer) return;
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
 
-            try {
-                // Validate coordinates
-                const lat = {{ $destination->latitude ?? 'null' }};
-                const lng = {{ $destination->longitude ?? 'null' }};
-
-                if (!lat || !lng) {
-                    console.warn('Invalid coordinates');
-                    return;
-                }
-
-                // Initialize map
-                const map = L.map('mapDestination', {
-                    center: [lat, lng],
-                    zoom: 15,
-                    scrollWheelZoom: false
-                });
-
-                // Add tile layer
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                    maxZoom: 19
-                }).addTo(map);
-
-                // Add main marker
-                const mainMarker = L.marker([lat, lng])
-                    .bindPopup(`
-                <div class="map-popup-content">
-                    <h6 class="mb-1">${@json($destination->name)}</h6>
-                    <p class="mb-0 text-muted small">${@json($destination->address)}</p>
-                </div>
-            `)
-                    .addTo(map);
-
-                // Add nearby markers if available
-                @if ($nearbyDestinations->isNotEmpty())
-                    const markers = L.markerClusterGroup();
-
-                    @foreach ($nearbyDestinations as $nearby)
-                        @if ($nearby->latitude && $nearby->longitude)
-                            L.marker([{{ $nearby->latitude }}, {{ $nearby->longitude }}])
-                                .bindPopup(`
-                            <div class="map-popup-content">
-                                <h6 class="mb-1">${@json($nearby->name)}</h6>
-                                <p class="mb-2 text-muted small">${@json($nearby->address)}</p>
-                                <a href="{{ route('destinations.show', $nearby->slug) }}"
-                                   class="btn btn-sm btn-outline-primary">
-                                    Detail
-                                </a>
-                            </div>
-                        `)
-                                .addTo(markers);
-                        @endif
-                    @endforeach
-
-                    map.addLayer(markers);
-                @endif
-
-                // Ensure map renders correctly
-                setTimeout(() => {
-                    map.invalidateSize();
-                }, 100);
-
-            } catch (error) {
-                console.error('Error initializing map:', error);
-                mapContainer.innerHTML = `
-            <div class="m-3 alert alert-danger">
-                Terjadi kesalahan saat memuat peta
-            </div>
-        `;
-            }
-        });
+        // Add marker
+        L.marker([{{ $destination->latitude }}, {{ $destination->longitude }}])
+            .addTo(map)
+            .bindPopup('{{ $destination->name }}');
     </script>
 @endpush

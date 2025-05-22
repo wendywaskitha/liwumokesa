@@ -7,6 +7,7 @@ use App\Models\Amenity;
 use App\Models\Culinary;
 use App\Models\TourGuide;
 use Illuminate\Support\Str;
+use App\Models\Accommodation;
 use App\Models\Transportation;
 use App\Models\CreativeEconomy;
 use Illuminate\Database\Eloquent\Model;
@@ -56,6 +57,13 @@ class Destination extends Model
     public function district()
     {
         return $this->belongsTo(District::class);
+    }
+
+    public function accommodations()
+    {
+        return $this->belongsToMany(Accommodation::class, 'destination_accommodation')
+            ->withPivot(['distance', 'is_recommended', 'notes'])
+            ->withTimestamps();
     }
 
     public function transportations()
