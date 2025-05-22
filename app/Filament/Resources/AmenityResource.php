@@ -221,7 +221,7 @@ class AmenityResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('featured_image')
                     ->label('Foto')
-                    ->square(),
+                    ->circular(),
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Fasilitas')

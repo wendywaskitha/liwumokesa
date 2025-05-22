@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Amenity;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CulturalHeritage extends Model
 {
@@ -70,6 +71,22 @@ class CulturalHeritage extends Model
     public function district()
     {
         return $this->belongsTo(District::class);
+    }
+
+    public function amenities()
+    {
+        return $this->belongsToMany(Amenity::class, 'amenity_cultural_heritage')
+            ->withPivot([
+                'opening_hours',
+                'closing_hours',
+                'is_free',
+                'fee',
+                'is_accessible',
+                'operational_notes',
+                'sort_order'
+            ])
+            ->orderBy('sort_order')
+            ->withTimestamps();
     }
 
     /**

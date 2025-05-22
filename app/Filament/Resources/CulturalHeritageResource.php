@@ -23,13 +23,13 @@ class CulturalHeritageResource extends Resource
     protected static ?string $model = CulturalHeritage::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-library';
-    
+
     protected static ?string $navigationLabel = 'Warisan Budaya';
-    
+
     protected static ?string $navigationGroup = 'Wisata';
-    
+
     protected static ?int $navigationSort = 50;
-    
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
@@ -43,7 +43,7 @@ class CulturalHeritageResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(fn (string $state, callable $set) => 
+                            ->afterStateUpdated(fn (string $state, callable $set) =>
                                 $set('slug', Str::slug($state))),
 
                         Forms\Components\TextInput::make('slug')
@@ -141,8 +141,8 @@ class CulturalHeritageResource extends Resource
                     ->schema([
                         Forms\Components\Placeholder::make('type_specific_info')
                             ->label(function (callable $get) {
-                                return $get('type') === 'tangible' 
-                                    ? 'Informasi Warisan Budaya Berwujud' 
+                                return $get('type') === 'tangible'
+                                    ? 'Informasi Warisan Budaya Berwujud'
                                     : 'Informasi Warisan Budaya Tak Berwujud';
                             }),
 
@@ -552,6 +552,7 @@ class CulturalHeritageResource extends Resource
         return [
             RelationManagers\GalleriesRelationManager::class,
             RelationManagers\EventsRelationManager::class,
+            RelationManagers\AmenitiesRelationManager::class,
         ];
     }
 
@@ -564,17 +565,17 @@ class CulturalHeritageResource extends Resource
             // 'view' => Pages\ViewCulturalHeritage::route('/{record}'),
         ];
     }
-    
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
     }
-    
+
     public static function getGlobalSearchResultTitle(Model $record): string
     {
         return $record->name;
     }
-    
+
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
@@ -582,7 +583,7 @@ class CulturalHeritageResource extends Resource
             'Kecamatan' => $record->district?->name ?? '-'
         ];
     }
-    
+
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'description', 'historical_significance', 'location'];

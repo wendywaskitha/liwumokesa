@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Destination;
+use App\Models\CulturalHeritage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -53,6 +54,22 @@ class Amenity extends Model
     public function destinations(): BelongsToMany
     {
         return $this->belongsToMany(Destination::class, 'destination_amenity', 'amenity_id', 'destination_id')
+            ->withTimestamps();
+    }
+
+    public function culturalHeritages()
+    {
+        return $this->belongsToMany(CulturalHeritage::class, 'amenity_cultural_heritage')
+            ->withPivot([
+                'opening_hours',
+                'closing_hours',
+                'is_free',
+                'fee',
+                'is_accessible',
+                'operational_notes',
+                'sort_order'
+            ])
+            ->orderBy('sort_order')
             ->withTimestamps();
     }
 }
