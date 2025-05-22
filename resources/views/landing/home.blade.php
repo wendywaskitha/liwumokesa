@@ -55,6 +55,9 @@
     <!-- Featured Destinations -->
     @include('partials.landing._featured-destinations')
 
+    <!-- Cultural Heritage Section -->
+    @include('partials.landing._cultural-heritage')
+
     <!-- Travel Packages -->
     @include('partials.landing._travel-packages')
 

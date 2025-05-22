@@ -9,6 +9,7 @@ use App\Http\Controllers\TouristController;
 use App\Http\Controllers\CreativeEconomyController;
 use App\Http\Controllers\EconomyCreativeController;
 use App\Http\Controllers\Tourist\DashboardController;
+use App\Http\Controllers\CulturalHeritageController;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('verify-ticket/{code}', [TicketController::class, 'showVerification'])
@@ -56,9 +57,11 @@ Route::get('economy-creative', [EconomyCreativeController::class, 'index'])
 Route::get('economy-creative/{creativeEconomy:slug}', [EconomyCreativeController::class, 'show'])
     ->name('economy-creative.show');
 
-// Cultural Heritage
-Route::get('/cultural-heritages', [LandingController::class, 'culturalHeritages'])->name('cultural-heritages.index');
-Route::get('/cultural-heritages/{slug}', [LandingController::class, 'showCulturalHeritage'])->name('cultural-heritages.show');
+// Cultural Heritage Routes
+Route::prefix('warisan-budaya')->name('landing.cultural-heritage.')->group(function () {
+    Route::get('/', [CulturalHeritageController::class, 'index'])->name('index');
+    Route::get('/{slug}', [CulturalHeritageController::class, 'show'])->name('show');
+});
 
 // Districts
 Route::get('/districts', [LandingController::class, 'districts'])->name('districts.index');
