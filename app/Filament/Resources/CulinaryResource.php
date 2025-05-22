@@ -57,14 +57,17 @@ class CulinaryResource extends Resource
                         Forms\Components\Select::make('type')
                             ->label('Jenis Tempat')
                             ->options([
+                                'seafood' => 'Seafood',
+                                'tradisional' => 'Tradisional',
+                                'kafe' => 'Kafe',
+                                'cafe' => 'Cafe',
                                 'restoran' => 'Restoran',
                                 'warung' => 'Warung',
-                                'kafe' => 'Kafe',
-                                'rumah_makan' => 'Rumah Makan',
-                                'pedagang_kaki_lima' => 'Pedagang Kaki Lima',
-                                'food_court' => 'Food Court',
+                                'street_food' => 'Kaki Lima',
+                                'bakery' => 'Bakery'
                             ])
-                            ->required(),
+                            ->required()
+                            ->native(false),
 
                         Forms\Components\Select::make('district_id')
                             ->label('Kecamatan')
@@ -231,11 +234,13 @@ class CulinaryResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => ucfirst($state))
                     ->color(fn (string $state): string => match ($state) {
+                        'seafood' => 'success',
+                        'tradisional' => 'danger',
+                        'kafe', 'cafe' => 'info',
                         'restoran' => 'primary',
-                        'kafe' => 'success',
-                        'warung' => 'warning',
-                        'food_court' => 'info',
-                        default => 'gray',
+                        'warung', 'street_food' => 'warning',
+                        'bakery' => 'success',
+                        default => 'secondary',
                     }),
 
                 Tables\Columns\TextColumn::make('district.name')
@@ -398,5 +403,14 @@ class CulinaryResource extends Resource
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'address', 'description', 'district.name'];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->when(
+                request()->input('type'),
+                fn (Builder $query, $type) => $query->where('type', $type)
+            );
     }
 }

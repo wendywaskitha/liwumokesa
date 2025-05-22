@@ -4,6 +4,7 @@
 namespace App\Models;
 
 use App\Models\Amenity;
+use App\Models\Culinary;
 use App\Models\TourGuide;
 use Illuminate\Support\Str;
 use App\Models\Transportation;
@@ -60,6 +61,14 @@ class Destination extends Model
     {
         return $this->belongsToMany(Transportation::class)
             ->withPivot(['service_type', 'notes'])
+            ->withTimestamps();
+    }
+
+    public function culinaries()
+    {
+        return $this->belongsToMany(Culinary::class, 'destination_culinary')
+            ->withPivot(['service_type', 'is_recommended', 'notes', 'sort_order'])
+            ->orderBy('sort_order')
             ->withTimestamps();
     }
 

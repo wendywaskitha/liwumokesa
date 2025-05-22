@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Destination;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Culinary extends Model
 {
@@ -79,6 +80,14 @@ class Culinary extends Model
     public function district()
     {
         return $this->belongsTo(District::class);
+    }
+
+    public function destinations()
+    {
+        return $this->belongsToMany(Destination::class, 'destination_culinary')
+            ->withPivot(['service_type', 'is_recommended', 'notes', 'sort_order'])
+            ->orderBy('sort_order')
+            ->withTimestamps();
     }
 
     /**

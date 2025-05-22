@@ -375,6 +375,7 @@ class DestinationResource extends Resource
             RelationManagers\AmenitiesRelationManager::class,
             RelationManagers\NearbyAccommodationsRelationManager::class,
             RelationManagers\TransportationsRelationManager::class,
+            RelationManagers\CulinaryRelationManager::class,
         ];
     }
 
