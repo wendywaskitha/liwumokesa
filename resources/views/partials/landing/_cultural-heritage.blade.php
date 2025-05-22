@@ -6,9 +6,12 @@
                 <h2 class="section-title">Warisan Budaya</h2>
                 <p class="section-description">Jelajahi kekayaan warisan budaya Muna Barat yang menakjubkan</p>
             </div>
-            <div class="col-lg-6 text-end">
-                <a href="{{ route('landing.cultural-heritage.index') }}" class="btn btn-outline-primary">Lihat Semua</a>
+            <div class="col-lg-6 text-lg-end">
+                <a href="{{ route('landing.cultural-heritage.index') }}" class="btn btn-primary">
+                    Lihat Semua <i class="bi bi-arrow-right ms-2"></i>
+                </a>
             </div>
+            
         </div>
 
         <div class="row g-4">

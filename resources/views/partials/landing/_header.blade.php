@@ -26,6 +26,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {{ request()->is('cultural-heritage.*') ? 'active' : '' }}"
+                           href="{{ route('landing.cultural-heritage.index') }}">
+                             Warisan Budaya
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{ request()->is('travel-packages*') ? 'active' : '' }}"
                            href="{{ route('packages.index') }}">
                             Paket Wisata

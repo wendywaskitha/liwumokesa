@@ -1,27 +1,29 @@
-<section class="travel-packages py-5 bg-light">
+<section class="py-5 travel-packages bg-light">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="mb-4 d-flex justify-content-between align-items-center">
             <h2 class="section-title">Paket Wisata Terbaik</h2>
             <a href="{{ route('packages.index') }}" class="btn btn-link text-primary">Lihat Semua</a>
         </div>
 
+        
+
         <div class="row g-4">
             @foreach(\App\Models\TravelPackage::where('is_featured', true)->limit(3)->get() as $package)
                 <div class="col-md-4">
-                    <div class="card h-100 shadow-sm border-0 package-card">
+                    <div class="border-0 shadow-sm card h-100 package-card">
                         <div class="position-relative">
                             @if($package->featured_image)
                                 <img src="{{ asset('storage/' . $package->featured_image) }}" class="card-img-top" alt="{{ $package->name }}" style="height: 200px; object-fit: cover;">
                             @else
                                 <div class="bg-light" style="height: 200px;"></div>
                             @endif
-                            <div class="position-absolute top-0 start-0 m-3">
-                                <span class="badge bg-white text-primary">{{ $package->duration }} Hari</span>
+                            <div class="top-0 m-3 position-absolute start-0">
+                                <span class="bg-white badge text-primary">{{ $package->duration }} Hari</span>
                             </div>
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">{{ $package->name }}</h5>
-                            <div class="d-flex align-items-center mb-2 text-muted small">
+                            <div class="mb-2 d-flex align-items-center text-muted small">
                                 <i class="bi bi-shield-check me-1"></i>
                                 <span>{{ ucfirst($package->difficulty) }}</span>
                             </div>
@@ -35,7 +37,7 @@
                                 @endforeach
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                            <div class="pt-3 mt-3 d-flex justify-content-between align-items-center border-top">
                                 <div>
                                     <small class="text-muted d-block">Mulai dari</small>
                                     <span class="text-primary fw-bold">Rp {{ number_format($package->price, 0, ',', '.') }}</span>
