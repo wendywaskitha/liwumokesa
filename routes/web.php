@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MapController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\LandingController;
@@ -8,8 +9,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TouristController;
 use App\Http\Controllers\CreativeEconomyController;
 use App\Http\Controllers\EconomyCreativeController;
-use App\Http\Controllers\Tourist\DashboardController;
 use App\Http\Controllers\CulturalHeritageController;
+use App\Http\Controllers\Tourist\DashboardController;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('verify-ticket/{code}', [TicketController::class, 'showVerification'])
@@ -66,6 +67,9 @@ Route::prefix('warisan-budaya')->name('landing.cultural-heritage.')->group(funct
 // Districts
 Route::get('/districts', [LandingController::class, 'districts'])->name('districts.index');
 Route::get('/districts/{slug}', [LandingController::class, 'showDistrict'])->name('districts.show');
+
+// Map Sebaran Wisata
+Route::get('/sebaran-wisata', [MapController::class, 'index'])->name('landing.map');
 
 // Global Search
 Route::get('/search', [LandingController::class, 'search'])->name('search');
