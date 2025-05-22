@@ -5,6 +5,7 @@
 namespace App\Models;
 
 use Illuminate\Support\Str;
+use App\Models\CulturalHeritage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -66,6 +67,13 @@ class Accommodation extends Model
     {
         return $this->belongsToMany(Destination::class, 'destination_accommodation')
             ->withPivot(['distance', 'is_recommended', 'notes'])
+            ->withTimestamps();
+    }
+
+    public function culturalHeritages()
+    {
+        return $this->belongsToMany(CulturalHeritage::class, 'accommodation_cultural_heritage')
+            ->withPivot(['partnership_type', 'is_recommended', 'notes'])
             ->withTimestamps();
     }
 

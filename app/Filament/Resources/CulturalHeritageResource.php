@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use App\Models\CulturalHeritage;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -553,6 +554,8 @@ class CulturalHeritageResource extends Resource
             RelationManagers\GalleriesRelationManager::class,
             RelationManagers\EventsRelationManager::class,
             RelationManagers\AmenitiesRelationManager::class,
+            RelationManagers\AccommodationsRelationManager::class,
+            RelationManagers\TransportationsRelationManager::class,
         ];
     }
 

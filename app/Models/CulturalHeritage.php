@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Amenity;
 use Illuminate\Support\Str;
+use App\Models\Transportation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -86,6 +87,20 @@ class CulturalHeritage extends Model
                 'sort_order'
             ])
             ->orderBy('sort_order')
+            ->withTimestamps();
+    }
+
+    public function accommodations()
+    {
+        return $this->belongsToMany(Accommodation::class, 'accommodation_cultural_heritage')
+            ->withPivot(['partnership_type', 'is_recommended', 'notes'])
+            ->withTimestamps();
+    }
+
+    public function transportations()
+    {
+        return $this->belongsToMany(Transportation::class, 'cultural_heritage_transportation')
+            ->withPivot(['service_type', 'route_notes', 'notes'])
             ->withTimestamps();
     }
 
