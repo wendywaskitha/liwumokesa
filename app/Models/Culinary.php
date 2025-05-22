@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Destination;
 use Illuminate\Support\Str;
+use App\Models\CulturalHeritage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -87,6 +88,13 @@ class Culinary extends Model
         return $this->belongsToMany(Destination::class, 'destination_culinary')
             ->withPivot(['service_type', 'is_recommended', 'notes', 'sort_order'])
             ->orderBy('sort_order')
+            ->withTimestamps();
+    }
+
+    public function culturalHeritages()
+    {
+        return $this->belongsToMany(CulturalHeritage::class, 'cultural_heritage_culinary')
+            ->withPivot(['service_type', 'is_recommended', 'notes'])
             ->withTimestamps();
     }
 

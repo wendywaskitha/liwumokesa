@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Amenity;
+use App\Models\Culinary;
 use Illuminate\Support\Str;
 use App\Models\Transportation;
 use Illuminate\Database\Eloquent\Model;
@@ -101,6 +102,13 @@ class CulturalHeritage extends Model
     {
         return $this->belongsToMany(Transportation::class, 'cultural_heritage_transportation')
             ->withPivot(['service_type', 'route_notes', 'notes'])
+            ->withTimestamps();
+    }
+
+    public function culinaries()
+    {
+        return $this->belongsToMany(Culinary::class, 'cultural_heritage_culinary')
+            ->withPivot(['service_type', 'is_recommended', 'notes'])
             ->withTimestamps();
     }
 

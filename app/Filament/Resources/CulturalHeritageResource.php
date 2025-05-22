@@ -556,6 +556,7 @@ class CulturalHeritageResource extends Resource
             RelationManagers\AmenitiesRelationManager::class,
             RelationManagers\AccommodationsRelationManager::class,
             RelationManagers\TransportationsRelationManager::class,
+            RelationManagers\CulinariesRelationManager::class,
         ];
     }
 
