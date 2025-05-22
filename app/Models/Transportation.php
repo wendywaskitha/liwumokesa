@@ -4,8 +4,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Destination;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transportation extends Model
 {
@@ -28,6 +29,13 @@ class Transportation extends Model
     public function district()
     {
         return $this->belongsTo(District::class);
+    }
+
+    public function destinations()
+    {
+        return $this->belongsToMany(Destination::class)
+            ->withPivot(['service_type', 'notes'])
+            ->withTimestamps();
     }
 
     public function galleries()

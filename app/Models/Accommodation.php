@@ -62,6 +62,13 @@ class Accommodation extends Model
         return $this->morphMany(Review::class, 'reviewable');
     }
 
+    public function destinations()
+    {
+        return $this->belongsToMany(Destination::class, 'destination_accommodation')
+            ->withPivot(['distance', 'is_recommended', 'notes'])
+            ->withTimestamps();
+    }
+
     // Method untuk mendapatkan akomodasi di sekitar
     public function nearbyDestinations($distance = 5) // dalam km
     {

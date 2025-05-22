@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\Amenity;
 use App\Models\TourGuide;
 use Illuminate\Support\Str;
+use App\Models\Transportation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -55,6 +56,13 @@ class Destination extends Model
         return $this->belongsTo(District::class);
     }
 
+    public function transportations()
+    {
+        return $this->belongsToMany(Transportation::class)
+            ->withPivot(['service_type', 'notes'])
+            ->withTimestamps();
+    }
+
     public function tourGuides()
     {
         return $this->belongsToMany(TourGuide::class, 'destination_tour_guide')
@@ -82,15 +90,22 @@ class Destination extends Model
         return $this->morphMany(Review::class, 'reviewable');
     }
 
+    // public function nearbyAccommodations()
+    // {
+    //     // Logic to find nearby accommodations based on coordinates
+    //     return Accommodation::select()
+    //         ->whereRaw("ST_Distance_Sphere(
+    //             point(longitude, latitude),
+    //             point(?, ?)
+    //         ) <= ?", [$this->longitude, $this->latitude, 5000]) // 5km radius
+    //         ->get();
+    // }
+
     public function nearbyAccommodations()
     {
-        // Logic to find nearby accommodations based on coordinates
-        return Accommodation::select()
-            ->whereRaw("ST_Distance_Sphere(
-                point(longitude, latitude),
-                point(?, ?)
-            ) <= ?", [$this->longitude, $this->latitude, 5000]) // 5km radius
-            ->get();
+        return $this->belongsToMany(Accommodation::class, 'destination_accommodation')
+            ->withPivot(['distance', 'is_recommended', 'notes'])
+            ->withTimestamps();
     }
 
     public function getFacilitiesAttribute($value)

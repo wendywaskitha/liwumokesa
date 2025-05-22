@@ -127,7 +127,7 @@
                     <!-- Facilities Section -->
                     <div class="mb-4 border-0 shadow-sm card rounded-3">
                         <div class="card-body">
-                            <h2 class="mb-4 h5">Fasilitas</h2>
+                            <h2 class="mb-4 h5">Fasilitas di Lakasi</h2>
 
                             @php
                                 // Decode facilities dari JSON
