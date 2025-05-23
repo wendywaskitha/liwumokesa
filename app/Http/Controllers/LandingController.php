@@ -35,11 +35,11 @@ class LandingController extends Controller
             ->get();
 
         // Cultural Heritage
-        // $culturalHeritages = CulturalHeritage::with('district')
-        //     ->where('status', true)
-        //     ->latest()
-        //     ->take(6)
-        //     ->get();
+        $culturalHeritages = CulturalHeritage::with('district')
+            ->where('status', true)
+            ->latest()
+            ->take(6)
+            ->get();
 
         $featuredPackages = TravelPackage::with('destinations')
             ->where('is_featured', true)
@@ -88,7 +88,7 @@ class LandingController extends Controller
 
         return view('landing.home', compact(
             'featuredDestinations',
-            // 'culturalHeritages',
+            'culturalHeritages',
             'featuredPackages',
             'upcomingEvents',
             'latestReviews',
