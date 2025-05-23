@@ -32,4 +32,10 @@ class Itinerary extends Model
     {
         return $this->hasMany(ItineraryItem::class)->orderBy('day')->orderBy('order');
     }
+
+    public function travelPackages()
+    {
+        return $this->belongsToMany(TravelPackage::class, 'itinerary_travel_package')
+            ->withTimestamps();
+    }
 }

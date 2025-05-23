@@ -8,6 +8,7 @@ use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TouristController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\ItineraryController;
 use App\Http\Controllers\CreativeEconomyController;
 use App\Http\Controllers\EconomyCreativeController;
 use App\Http\Controllers\CulturalHeritageController;
@@ -137,23 +138,20 @@ Route::middleware(['auth', 'verified', 'tourist'])->group(function () {
             Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
             Route::patch('/wishlist/{wishlist}/priority', [WishlistController::class, 'updatePriority'])->name('wishlist.priority');
             Route::patch('/wishlist/{wishlist}/notes', [WishlistController::class, 'updateNotes'])->name('wishlist.notes');
-        
+
 
         // Itinerary routes
-        Route::prefix('itinerary')->name('itinerary.')->group(function () {
-            Route::get('/', [TouristController::class, 'itinerary'])
-                ->name('index');
-            Route::post('/', [TouristController::class, 'storeItinerary'])
-                ->name('store');
-            Route::put('/{itinerary}', [TouristController::class, 'updateItinerary'])->name('update');
-            Route::get('/{itinerary}', [TouristController::class, 'showItinerary'])
-                ->name('show');
-            Route::put('/{itinerary}', [TouristController::class, 'updateItinerary'])
-                ->name('update');
-            Route::delete('/{itinerary}', [TouristController::class, 'destroyItinerary'])
-                ->name('destroy');
+        Route::controller(ItineraryController::class)->prefix('itinerary')->name('itinerary.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{itinerary}', 'show')->name('show');
+            Route::put('/{itinerary}', 'update')->name('update');
+            Route::delete('/{itinerary}', 'destroy')->name('destroy');
+
+            // Itinerary items routes
+            Route::post('{itinerary}/items', [ItineraryController::class, 'storeItem'])->name('items.store');
+            Route::put('{itinerary}/items/{item}', [ItineraryController::class, 'updateItem'])->name('items.update');
+            Route::delete('{itinerary}/items/{item}', [ItineraryController::class, 'destroyItem'])->name('items.destroy');
         });
-
-
     });
 });
