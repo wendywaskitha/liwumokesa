@@ -35,6 +35,12 @@ class ConfirmablePasswordController extends Controller
 
         $request->session()->put('auth.password_confirmed_at', time());
 
+        // Redirect based on user role
+        if ($request->user()->isWisatawan()) {
+            return redirect()->intended(route('tourist.dashboard', absolute: false));
+        }
+
+        // Default redirect for other roles or fallback
         return redirect()->intended(route('dashboard', absolute: false));
     }
 }
