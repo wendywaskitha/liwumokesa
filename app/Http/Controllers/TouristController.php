@@ -106,24 +106,49 @@ class TouristController extends Controller
     public function updateProfilePhoto(Request $request)
     {
         $request->validate([
-            'photo' => ['required', 'image', 'max:2048'], // max 2MB
+            'profile_image' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+        ], [
+            'profile_image.required' => 'Silakan pilih foto terlebih dahulu.',
+            'profile_image.image' => 'File harus berupa gambar.',
+            'profile_image.mimes' => 'Format foto harus jpeg, png, atau jpg.',
+            'profile_image.max' => 'Ukuran foto maksimal 2MB.'
         ]);
 
         $user = auth()->user();
 
-        if ($request->hasFile('photo')) {
-            // Delete old photo if exists
+        if ($request->hasFile('profile_image')) {
+            // Hapus foto lama jika ada
             if ($user->profile_image) {
                 Storage::delete('public/' . $user->profile_image);
             }
 
-            // Store new photo
-            $path = $request->file('photo')->store('profile-photos', 'public');
+            // Upload foto baru
+            $path = $request->file('profile_image')->store('profile-photos', 'public');
             $user->update(['profile_image' => $path]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Foto profil berhasil diperbarui!',
+                    'photo_url' => $user->profile_photo_url
+                ]);
+            }
+
+            flash()->success('Foto profil berhasil diperbarui!');
+            return back();
         }
 
-        return back()->with('success', 'Foto profil berhasil diperbarui');
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengupload foto.'
+            ], 422);
+        }
+
+        flash()->error('Terjadi kesalahan saat mengupload foto.');
+        return back();
     }
+
 
     public function reviews()
     {

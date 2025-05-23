@@ -9,6 +9,7 @@
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
+                    <!-- Name Input -->
                     <div class="mb-3">
                         <label class="form-label">Nama Lengkap</label>
                         <input type="text"
@@ -21,6 +22,7 @@
                         @enderror
                     </div>
 
+                    <!-- Phone Input -->
                     <div class="mb-3">
                         <label class="form-label">No. Telepon</label>
                         <input type="tel"
@@ -32,11 +34,12 @@
                         @enderror
                     </div>
 
+                    <!-- Address Input -->
                     <div class="mb-3">
                         <label class="form-label">Alamat</label>
                         <textarea class="form-control @error('address') is-invalid @enderror"
-                                  name="address"
-                                  rows="3">{{ old('address', auth()->user()->address) }}</textarea>
+                                name="address"
+                                rows="3">{{ old('address', auth()->user()->address) }}</textarea>
                         @error('address')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -44,7 +47,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i>Simpan Perubahan
+                    </button>
                 </div>
             </form>
         </div>

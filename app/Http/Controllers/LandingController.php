@@ -35,11 +35,11 @@ class LandingController extends Controller
             ->get();
 
         // Cultural Heritage
-        $culturalHeritages = CulturalHeritage::with('district')
-            ->where('status', true)
-            ->latest()
-            ->take(6)
-            ->get();
+        // $culturalHeritages = CulturalHeritage::with('district')
+        //     ->where('status', true)
+        //     ->latest()
+        //     ->take(6)
+        //     ->get();
 
         $featuredPackages = TravelPackage::with('destinations')
             ->where('is_featured', true)
@@ -88,7 +88,7 @@ class LandingController extends Controller
 
         return view('landing.home', compact(
             'featuredDestinations',
-            'culturalHeritages',
+            // 'culturalHeritages',
             'featuredPackages',
             'upcomingEvents',
             'latestReviews',
@@ -597,80 +597,80 @@ class LandingController extends Controller
         return view('landing.culinary-single', compact('culinary', 'similarCulinaries'));
     }
 
-    /**
-     * Menampilkan daftar warisan budaya
-     */
-    public function culturalHeritages(Request $request)
-    {
-        $query = CulturalHeritage::query()->with(['district']);
+    // /**
+    //  * Menampilkan daftar warisan budaya
+    //  */
+    // public function culturalHeritages(Request $request)
+    // {
+    //     $query = CulturalHeritage::query()->with(['district']);
 
-        // Filter pencarian
-        if ($request->has('q')) {
-            $query->where('name', 'like', '%' . $request->q . '%')
-                  ->orWhere('description', 'like', '%' . $request->q . '%');
-        }
+    //     // Filter pencarian
+    //     if ($request->has('q')) {
+    //         $query->where('name', 'like', '%' . $request->q . '%')
+    //               ->orWhere('description', 'like', '%' . $request->q . '%');
+    //     }
 
-        // Filter berdasarkan district
-        if ($request->has('district_id') && $request->district_id) {
-            $query->where('district_id', $request->district_id);
-        }
+    //     // Filter berdasarkan district
+    //     if ($request->has('district_id') && $request->district_id) {
+    //         $query->where('district_id', $request->district_id);
+    //     }
 
-        // Filter berdasarkan tipe
-        if ($request->has('type') && $request->type) {
-            $query->where('type', $request->type);
-        }
+    //     // Filter berdasarkan tipe
+    //     if ($request->has('type') && $request->type) {
+    //         $query->where('type', $request->type);
+    //     }
 
-        // Pengurutan
-        $sort = $request->sort ?? 'newest';
-        switch ($sort) {
-            case 'name_asc':
-                $query->orderBy('name');
-                break;
-            case 'name_desc':
-                $query->orderByDesc('name');
-                break;
-            default:
-                $query->orderByDesc('created_at');
-                break;
-        }
+    //     // Pengurutan
+    //     $sort = $request->sort ?? 'newest';
+    //     switch ($sort) {
+    //         case 'name_asc':
+    //             $query->orderBy('name');
+    //             break;
+    //         case 'name_desc':
+    //             $query->orderByDesc('name');
+    //             break;
+    //         default:
+    //             $query->orderByDesc('created_at');
+    //             break;
+    //     }
 
-        $heritages = $query->paginate(12)->appends($request->query());
+    //     $heritages = $query->paginate(12)->appends($request->query());
 
-        // Data untuk filter
-        $districts = District::orderBy('name')->get();
-        $types = CulturalHeritage::distinct('type')->pluck('type')->filter();
+    //     // Data untuk filter
+    //     $districts = District::orderBy('name')->get();
+    //     $types = CulturalHeritage::distinct('type')->pluck('type')->filter();
 
-        return view('landing.cultural-heritages', compact('heritages', 'districts', 'types'));
-    }
+    //     return view('landing.cultural-heritages', compact('heritages', 'districts', 'types'));
+    // }
 
-    /**
-     * Menampilkan detail warisan budaya
-     */
-    public function showCulturalHeritage($slug)
-    {
-        $heritage = CulturalHeritage::with([
-            'district',
-            'galleries',
-            'related_events'
-        ])->where('slug', $slug)->firstOrFail();
+    // /**
+    //  * Menampilkan detail warisan budaya
+    //  */
+    // public function showCulturalHeritage($slug)
+    // {
+    //     $heritage = CulturalHeritage::with([
+    //         'district',
+    //         'galleries',
+    //         'related_events'
+    //     ])->where('slug', $slug)->firstOrFail();
 
-        // Mencatat kunjungan jika model Visit ada
-        if (class_exists('App\Models\Visit')) {
-            \App\Models\Visit::recordPageVisit('cultural-heritages/' . $slug, auth()->id());
-        }
+    //     // Mencatat kunjungan jika model Visit ada
+    //     if (class_exists('App\Models\Visit')) {
+    //         \App\Models\Visit::recordPageVisit('cultural-heritages/' . $slug, auth()->id());
+    //     }
 
-        // Warisan budaya terkait
-        $relatedHeritages = CulturalHeritage::where('id', '!=', $heritage->id)
-            ->where(function($query) use ($heritage) {
-                $query->where('type', $heritage->type)
-                      ->orWhere('district_id', $heritage->district_id);
-            })
-            ->inRandomOrder()
-            ->take(3)
-            ->get();
+    //     // Warisan budaya terkait
+    //     $relatedHeritages = CulturalHeritage::where('id', '!=', $heritage->id)
+    //         ->where(function($query) use ($heritage) {
+    //             $query->where('type', $heritage->type)
+    //                   ->orWhere('district_id', $heritage->district_id);
+    //         })
+    //         ->inRandomOrder()
+    //         ->take(3)
+    //         ->get();
 
-        return view('landing.cultural-heritage-single', compact('heritage', 'relatedHeritages'));
-    }
+    //     return view('landing.cultural-heritage-single', compact('heritage', 'relatedHeritages'));
+    // }
 
     /**
      * Menampilkan halaman Tentang Kami
