@@ -769,7 +769,7 @@ class LandingController extends Controller
             'reviewable_type' => 'required|string',
             'reviewable_id' => 'required|integer',
             'rating' => 'required|integer|min:1|max:5',
-            'content' => 'required|string|min:10|max:1000',
+            'comment' => 'required|string|min:10|max:1000', // Ubah dari 'content' ke 'comment'
         ]);
 
         // Cek apakah user sudah login
@@ -793,12 +793,13 @@ class LandingController extends Controller
         $review->reviewable_id = $validated['reviewable_id'];
         $review->user_id = auth()->id();
         $review->rating = $validated['rating'];
-        $review->content = $validated['content'];
-        $review->status = Setting::get('review.auto_approve', false) ? 'approved' : 'pending';
+        $review->comment = $validated['comment']; // Ubah dari 'content' ke 'comment'
+        $review->status = 'pending'; // Default ke pending untuk moderasi
         $review->save();
 
-        return redirect()->back()->with('success', 'Terima kasih! Ulasan Anda telah tersimpan.');
+        return redirect()->back()->with('success', 'Terima kasih! Ulasan Anda telah tersimpan dan sedang menunggu moderasi.');
     }
+
 
     /**
      * Mendaftar ke event

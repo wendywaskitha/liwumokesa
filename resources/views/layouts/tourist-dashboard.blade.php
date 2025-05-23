@@ -13,6 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
+    @flasher_render
     <style>
         :root {
             --primary-color: #2563eb;
@@ -139,6 +140,7 @@
         }
     </style>
     @stack('styles')
+
 </head>
 
 <body>
@@ -232,6 +234,7 @@
     </script>
 
     @stack('scripts')
+    @flasher_scripts
 </body>
 
 </html>

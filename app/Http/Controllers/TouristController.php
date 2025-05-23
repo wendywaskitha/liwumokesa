@@ -8,10 +8,12 @@ use App\Models\Wishlist;
 use App\Models\ReviewImage;
 use Illuminate\Http\Request;
 use App\Models\TravelPackage;
+use Flasher\Prime\FlasherInterface;
 use Illuminate\Support\Facades\Storage;
 
 class TouristController extends Controller
 {
+
     public function dashboard()
     {
         $user = auth()->user();
@@ -132,6 +134,67 @@ class TouristController extends Controller
 
         return view('tourist.reviews.index', compact('reviews'));
     }
+
+    public function updateReview(Request $request, Review $review)
+    {
+        // Validasi kepemilikan review
+        if ($review->user_id !== auth()->id()) {
+            flash()->error('Anda tidak memiliki akses untuk mengubah ulasan ini.');
+            return back();
+        }
+
+        // Validasi status review
+        if ($review->status === 'approved') {
+            flash()->warning('Ulasan yang sudah disetujui tidak dapat diubah.');
+            return back();
+        }
+
+        try {
+            // Validasi input
+            $validated = $request->validate([
+                'rating' => 'required|integer|min:1|max:5',
+                'comment' => 'required|string|min:10|max:1000',
+            ]);
+
+            // Update review
+            $review->update($validated);
+
+            flash()->success('Ulasan berhasil diperbarui!');
+            return back();
+
+        } catch (\Exception $e) {
+            flash()->error('Terjadi kesalahan saat memperbarui ulasan.');
+            return back();
+        }
+    }
+
+    public function deleteReview(Review $review)
+    {
+        // Validasi kepemilikan review
+        if ($review->user_id !== auth()->id()) {
+            flash()->error('Anda tidak memiliki akses untuk menghapus ulasan ini.');
+            return back();
+        }
+
+        // Validasi status review
+        if ($review->status === 'approved') {
+            flash()->warning('Ulasan yang sudah disetujui tidak dapat dihapus.');
+            return back();
+        }
+
+        try {
+            // Hapus review
+            $review->delete();
+
+            flash()->success('Ulasan berhasil dihapus!');
+            return back();
+
+        } catch (\Exception $e) {
+            flash()->error('Terjadi kesalahan saat menghapus ulasan.');
+            return back();
+        }
+    }
+
 
     public function wishlist()
     {

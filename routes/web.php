@@ -124,9 +124,11 @@ Route::middleware(['auth', 'verified', 'tourist'])->group(function () {
         });
 
         // Reviews
+        // Reviews routes
         Route::prefix('reviews')->name('reviews.')->group(function () {
-            Route::get('/', [TouristController::class, 'reviews'])
-                ->name('index');
+            Route::get('/', [TouristController::class, 'reviews'])->name('index');
+            Route::put('/{review}', [TouristController::class, 'updateReview'])->name('update');
+            Route::delete('/{review}', [TouristController::class, 'deleteReview'])->name('destroy');
         });
 
         // Wishlist

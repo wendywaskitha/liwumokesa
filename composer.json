@@ -14,6 +14,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "milon/barcode": "^12.0",
+        "php-flasher/flasher-laravel": "^2.1",
         "phpoffice/phpspreadsheet": "^4.2",
         "saade/filament-fullcalendar": "^3.2",
         "simplesoftwareio/simple-qrcode": "^4.2",

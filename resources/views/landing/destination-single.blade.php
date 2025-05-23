@@ -395,9 +395,26 @@
                         </div>
 
                         <!-- Reviews Tab -->
+                        <!-- Reviews Tab -->
                         <div class="tab-pane fade" id="reviews">
                             <div class="border-0 shadow-sm card">
                                 <div class="card-body">
+                                    <!-- Alert Messages -->
+                                    @if (session('success'))
+                                        <div class="mb-4 alert alert-success alert-dismissible fade show" role="alert">
+                                            {{ session('success') }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    @endif
+
+                                    @if (session('error'))
+                                        <div class="mb-4 alert alert-danger alert-dismissible fade show" role="alert">
+                                            {{ session('error') }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    @endif
+
+                                    <!-- Header -->
                                     <div class="mb-4 d-flex justify-content-between align-items-center">
                                         <h2 class="mb-0 h5">Ulasan Pengunjung</h2>
                                         @auth
@@ -412,26 +429,33 @@
                                         @endauth
                                     </div>
 
-                                    @if ($destination->reviews->isNotEmpty())
+                                    <!-- Reviews Content -->
+                                    @if ($destination->reviews->where('status', 'approved')->isNotEmpty())
+                                        <!-- Rating Summary -->
                                         <div class="mb-4 row">
                                             <div class="text-center col-md-4">
                                                 <div class="display-4 fw-bold text-primary">
-                                                    {{ number_format($destination->reviews->avg('rating'), 1) }}
+                                                    {{ number_format($destination->reviews->where('status', 'approved')->avg('rating'), 1) }}
                                                 </div>
                                                 <div class="mb-2">
                                                     @for ($i = 1; $i <= 5; $i++)
                                                         <i
-                                                            class="bi bi-star{{ $i <= round($destination->reviews->avg('rating')) ? '-fill' : '' }} text-warning"></i>
+                                                            class="bi bi-star{{ $i <= round($destination->reviews->where('status', 'approved')->avg('rating')) ? '-fill' : '' }} text-warning"></i>
                                                     @endfor
                                                 </div>
                                                 <div class="text-muted">
-                                                    {{ $destination->reviews->count() }} ulasan
+                                                    {{ $destination->reviews->where('status', 'approved')->count() }}
+                                                    ulasan
                                                 </div>
                                             </div>
                                             <div class="col-md-8">
                                                 @php
-                                                    $ratings = $destination->reviews->groupBy('rating');
-                                                    $totalReviews = $destination->reviews->count();
+                                                    $approvedReviews = $destination->reviews->where(
+                                                        'status',
+                                                        'approved',
+                                                    );
+                                                    $ratings = $approvedReviews->groupBy('rating');
+                                                    $totalReviews = $approvedReviews->count();
                                                 @endphp
                                                 @for ($i = 5; $i >= 1; $i--)
                                                     <div class="mb-2 d-flex align-items-center">
@@ -441,7 +465,7 @@
                                                         <div class="mx-2 flex-grow-1">
                                                             <div class="progress" style="height: 6px;">
                                                                 <div class="progress-bar bg-warning"
-                                                                    style="width: {{ ($ratings->get($i, collect())->count() / $totalReviews) * 100 }}%">
+                                                                    style="width: {{ ($ratings->get($i, collect())->count() / ($totalReviews ?: 1)) * 100 }}%">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -453,7 +477,8 @@
                                             </div>
                                         </div>
 
-                                        @foreach ($destination->reviews as $review)
+                                        <!-- Reviews List -->
+                                        @foreach ($destination->reviews->where('status', 'approved')->sortByDesc('created_at') as $review)
                                             <div class="pb-4 mb-4 border-bottom last:border-0 last:pb-0 last:mb-0">
                                                 <div class="d-flex">
                                                     <img src="{{ $review->user->profile_photo_url }}"
@@ -581,26 +606,40 @@
                         <input type="hidden" name="reviewable_id" value="{{ $destination->id }}">
 
                         <div class="modal-body">
+                            <!-- Rating Input -->
                             <div class="mb-3">
-                                <label class="form-label">Rating</label>
+                                <label class="form-label">Rating <span class="text-danger">*</span></label>
                                 <div class="rating-input">
                                     @for ($i = 5; $i >= 1; $i--)
                                         <input type="radio" name="rating" value="{{ $i }}"
-                                            id="rating{{ $i }}">
+                                            id="rating{{ $i }}" required>
                                         <label for="rating{{ $i }}">
                                             <i class="bi bi-star-fill"></i>
                                         </label>
                                     @endfor
                                 </div>
+                                @error('rating')
+                                    <div class="mt-1 text-danger small">{{ $message }}</div>
+                                @enderror
                             </div>
+
+                            <!-- Comment Input -->
                             <div class="mb-3">
-                                <label class="form-label">Komentar</label>
-                                <textarea class="form-control" name="comment" rows="3" required></textarea>
+                                <label class="form-label">Komentar <span class="text-danger">*</span></label>
+                                <textarea class="form-control @error('comment') is-invalid @enderror" name="comment" rows="3" required
+                                    minlength="10" maxlength="1000" placeholder="Bagikan pengalaman Anda..."></textarea>
+                                <div class="form-text">Minimal 10 karakter, maksimal 1000 karakter</div>
+                                @error('comment')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Kirim Ulasan</button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send me-1"></i>Kirim Ulasan
+                            </button>
                         </div>
                     </form>
                 </div>
