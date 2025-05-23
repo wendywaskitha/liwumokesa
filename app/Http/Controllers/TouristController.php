@@ -18,43 +18,43 @@ class TouristController extends Controller
     {
         $user = auth()->user();
 
-        // Update statistik sesuai dengan yang ditampilkan di view
-        $stats = [
-            'total_visits' => Booking::where('user_id', $user->id)
-                ->where('booking_status', 'confirmed')
-                ->count(),
+        // Get counts
+        $activeBookings = $user->bookings()
+            ->whereIn('booking_status', ['pending', 'confirmed'])
+            ->count();
 
-            'total_reviews' => Review::where('user_id', $user->id)
-                ->count(),
+        $itineraryCount = $user->itineraries()
+            ->count();
 
-            'wishlist_count' => Wishlist::where('user_id', $user->id)
-                ->count(),
+        $wishlistCount = $user->wishlists()
+            ->count();
 
-            'planned_trips' => Booking::where('user_id', $user->id)
-                ->where('booking_status', 'pending')
-                ->where('booking_date', '>=', now())
-                ->count(), // Menghitung rencana perjalanan yang akan datang
-        ];
+        $reviewCount = $user->reviews()
+            ->count();
 
         // Get upcoming bookings
-        $upcomingBookings = Booking::where('user_id', $user->id)
-            ->where('booking_date', '>=', now())
-            ->with('travelPackage')
+        $upcomingBookings = $user->bookings()
+            ->with('travelPackage') // Eager load travel package
+            ->where('booking_status', 'confirmed')
+            ->where('booking_date', '>=', now()) // Sesuaikan dengan nama kolom yang benar
+            ->orderBy('booking_date') // Sesuaikan dengan nama kolom yang benar
+            ->take(5)
+            ->get();
+
+        // Get recent reviews
+        $recentReviews = $user->reviews()
+            ->with('reviewable') // Eager load reviewable
             ->latest()
             ->take(5)
             ->get();
 
-        // Get latest reviews
-        $latestReviews = Review::where('user_id', $user->id)
-            ->with('reviewable')
-            ->latest()
-            ->take(3)
-            ->get();
-
         return view('tourist.dashboard.index', compact(
-            'stats',
+            'activeBookings',
+            'itineraryCount',
+            'wishlistCount',
+            'reviewCount',
             'upcomingBookings',
-            'latestReviews'
+            'recentReviews'
         ));
     }
 

@@ -42,4 +42,24 @@ class Booking extends Model
     {
         return $this->belongsTo(TravelPackage::class);
     }
+
+    public function getStatusColorAttribute()
+    {
+        return match($this->booking_status) {
+            'pending' => 'warning',
+            'confirmed' => 'success',
+            'cancelled' => 'danger',
+            default => 'secondary'
+        };
+    }
+
+    public function getStatusTextAttribute()
+    {
+        return match($this->booking_status) {
+            'pending' => 'Menunggu',
+            'confirmed' => 'Dikonfirmasi',
+            'cancelled' => 'Dibatalkan',
+            default => 'Unknown'
+        };
+    }
 }

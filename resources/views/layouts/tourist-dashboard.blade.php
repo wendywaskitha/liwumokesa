@@ -1,7 +1,5 @@
-{{-- resources/views/layouts/tourist-dashboard.blade.php --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,7 +11,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-    {{-- @flasher_render --}}
     <style>
         :root {
             --primary-color: #2563eb;
@@ -81,7 +78,6 @@
         .main-content {
             flex: 1;
             margin-left: 280px;
-            /* Sesuaikan dengan lebar sidebar */
             padding: 2rem;
             min-height: 100vh;
             background: #f8fafc;
@@ -133,16 +129,10 @@
             .main-content {
                 margin-left: 0;
             }
-
-            .sidebar-toggle {
-                display: block;
-            }
         }
     </style>
     @stack('styles')
-
 </head>
-
 <body>
     <!-- Sidebar -->
     <nav class="sidebar">
@@ -152,37 +142,37 @@
 
         <div class="sidebar-menu">
             <a href="{{ route('tourist.dashboard') }}"
-                class="sidebar-item {{ request()->routeIs('tourist.dashboard') ? 'active' : '' }}">
+               class="sidebar-item {{ request()->routeIs('tourist.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-speedometer2"></i>
                 Dashboard
             </a>
 
             <a href="{{ route('tourist.bookings.index') }}"
-                class="sidebar-item {{ request()->routeIs('tourist.bookings.*') ? 'active' : '' }}">
+               class="sidebar-item {{ request()->routeIs('tourist.bookings.*') ? 'active' : '' }}">
                 <i class="bi bi-calendar-check"></i>
                 Pemesanan
             </a>
 
             <a href="{{ route('tourist.reviews.index') }}"
-                class="sidebar-item {{ request()->routeIs('tourist.reviews.*') ? 'active' : '' }}">
+               class="sidebar-item {{ request()->routeIs('tourist.reviews.*') ? 'active' : '' }}">
                 <i class="bi bi-star"></i>
                 Ulasan
             </a>
 
             <a href="{{ route('tourist.wishlist.index') }}"
-                class="sidebar-item {{ request()->routeIs('tourist.wishlist.*') ? 'active' : '' }}">
+               class="sidebar-item {{ request()->routeIs('tourist.wishlist.*') ? 'active' : '' }}">
                 <i class="bi bi-heart"></i>
                 Wishlist
             </a>
 
             <a href="{{ route('tourist.itinerary.index') }}"
-                class="sidebar-item {{ request()->routeIs('tourist.itinerary.*') ? 'active' : '' }}">
+               class="sidebar-item {{ request()->routeIs('tourist.itinerary.*') ? 'active' : '' }}">
                 <i class="bi bi-map"></i>
                 Rencana Perjalanan
             </a>
 
             <a href="{{ route('tourist.profile') }}"
-                class="sidebar-item {{ request()->routeIs('tourist.profile') ? 'active' : '' }}">
+               class="sidebar-item {{ request()->routeIs('tourist.profile') ? 'active' : '' }}">
                 <i class="bi bi-person"></i>
                 Profil
             </a>
@@ -193,32 +183,43 @@
     <div class="main-content">
         <!-- Top Bar -->
         <div class="mb-4 d-flex justify-content-between align-items-center">
-            <button class="btn btn-dark d-md-none sidebar-toggle">
-                <i class="bi bi-list"></i>
-            </button>
+            <div>
+                <h4 class="mb-1">@yield('title')</h4>
+                @hasSection('subtitle')
+                    <p class="mb-0 text-muted">@yield('subtitle')</p>
+                @endif
+            </div>
 
-            <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    {{ auth()->user()->name }}
-                </button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a class="dropdown-item" href="{{ route('tourist.profile') }}">
-                            <i class="bi bi-person me-2"></i> Profil
-                        </a>
-                    </li>
-                    <li>
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="dropdown-item text-danger">
-                                <i class="bi bi-box-arrow-right me-2"></i> Logout
-                            </button>
-                        </form>
-                    </li>
-                </ul>
+            <div class="gap-3 d-flex align-items-center">
+                @hasSection('actions')
+                    @yield('actions')
+                @endif
+
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        {{ auth()->user()->name }}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" href="{{ route('tourist.profile') }}">
+                                <i class="bi bi-person me-2"></i> Profil
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
 
+        <!-- Page Content -->
         @yield('content')
     </div>
 
@@ -227,14 +228,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Toggle Sidebar
+        // Toggle Sidebar on Mobile
         document.querySelector('.sidebar-toggle')?.addEventListener('click', function() {
             document.querySelector('.sidebar').classList.toggle('active');
         });
     </script>
 
     @stack('scripts')
-    {{-- @flasher_scripts --}}
 </body>
-
 </html>

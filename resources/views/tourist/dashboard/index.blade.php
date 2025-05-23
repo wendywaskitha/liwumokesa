@@ -1,96 +1,198 @@
-{{-- resources/views/tourist/dashboard/index.blade.php --}}
 @extends('layouts.tourist-dashboard')
 
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="container-fluid">
-    <!-- Stats Cards -->
-    <div class="mb-4 row g-3">
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="card stats-card">
-                <div class="card-body">
-                    <h6 class="mb-2 card-subtitle text-muted">Total Kunjungan</h6>
-                    <h2 class="mb-0 card-title">{{ $stats['total_visits'] }}</h2>
+    <div class="container-fluid">
+        <!-- Welcome Section -->
+        <div class="mb-4 row">
+            <div class="col-12">
+                <div class="text-white card bg-primary">
+                    <div class="py-4 card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <img src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name }}"
+                                    class="rounded-circle" width="60">
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h4 class="mb-1">Selamat datang, {{ auth()->user()->name }}!</h4>
+                                <p class="mb-0">Apa rencana perjalanan Anda hari ini?</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="card stats-card">
-                <div class="card-body">
-                    <h6 class="mb-2 card-subtitle text-muted">Ulasan</h6>
-                    <h2 class="mb-0 card-title">{{ $stats['total_reviews'] }}</h2>
+        <!-- Quick Stats -->
+        <div class="mb-4 row g-4">
+            <!-- Active Bookings -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="p-3 rounded bg-primary bg-opacity-10">
+                                    <i class="mb-0 bi bi-calendar-check text-primary h3"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 text-muted">Pemesanan Aktif</h6>
+                                <h4 class="mb-0">{{ $activeBookings }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Travel Plans -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="p-3 rounded bg-success bg-opacity-10">
+                                    <i class="mb-0 bi bi-map text-success h3"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 text-muted">Rencana Perjalanan</h6>
+                                <h4 class="mb-0">{{ $itineraryCount }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wishlists -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="p-3 rounded bg-warning bg-opacity-10">
+                                    <i class="mb-0 bi bi-heart text-warning h3"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 text-muted">Wishlist</h6>
+                                <h4 class="mb-0">{{ $wishlistCount }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="p-3 rounded bg-info bg-opacity-10">
+                                    <i class="mb-0 bi bi-star text-info h3"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 text-muted">Ulasan</h6>
+                                <h4 class="mb-0">{{ $reviewCount }}</h4>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="card stats-card">
-                <div class="card-body">
-                    <h6 class="mb-2 card-subtitle text-muted">Wishlist</h6>
-                    <h2 class="mb-0 card-title">{{ $stats['wishlist_count'] }}</h2>
+        <!-- Recent Activities -->
+        <div class="row">
+            <!-- Upcoming Bookings -->
+            <div class="mb-4 col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 card-title">Pemesanan Mendatang</h5>
+                        <a href="{{ route('tourist.bookings.index') }}" class="btn btn-sm btn-outline-primary">
+                            Lihat Semua
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        @forelse($upcomingBookings as $booking)
+                            <div class="mb-3 d-flex align-items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="p-2 rounded bg-light">
+                                        <i class="mb-0 bi bi-calendar-event h5"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">
+                                        @if ($booking->travelPackage)
+                                            {{ $booking->travelPackage->name }}
+                                        @else
+                                            Paket tidak tersedia
+                                        @endif
+                                    </h6>
+                                    <p class="mb-0 small text-muted">
+                                        {{ \Carbon\Carbon::parse($booking->booking_date)->format('d M Y') }}
+                                    </p>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <span class="badge bg-{{ $booking->status_color }}">
+                                        {{ $booking->status_text }}
+                                    </span>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="py-4 text-center">
+                                <i class="bi bi-calendar-x h1 text-muted"></i>
+                                <p class="mt-2 mb-0">Belum ada pemesanan mendatang</p>
+                            </div>
+                        @endforelse
+
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-12 col-md-6 col-lg-3">
-            <div class="card stats-card">
-                <div class="card-body">
-                    <h6 class="mb-2 card-subtitle text-muted">Rencana Perjalanan</h6>
-                    <h2 class="mb-0 card-title">{{ $stats['planned_trips'] }}</h2>
+            <!-- Recent Reviews -->
+            <div class="mb-4 col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 card-title">Ulasan Terbaru</h5>
+                        <a href="{{ route('tourist.reviews.index') }}" class="btn btn-sm btn-outline-primary">
+                            Lihat Semua
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        @forelse($recentReviews as $review)
+                            <div class="mb-3 d-flex align-items-start">
+                                <div class="flex-shrink-0">
+                                    <div class="p-2 rounded bg-light">
+                                        <i class="mb-0 bi bi-star h5"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h6 class="mb-1">
+                                        @if ($review->reviewable)
+                                            {{ $review->reviewable->name }}
+                                        @else
+                                            Item tidak tersedia
+                                        @endif
+                                    </h6>
+                                    <div class="mb-1 text-warning small">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <i class="bi bi-star-fill{{ $i <= $review->rating ? '' : ' text-muted' }}"></i>
+                                        @endfor
+                                    </div>
+                                    <p class="mb-0 small text-muted">{{ Str::limit($review->comment, 100) }}</p>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="py-4 text-center">
+                                <i class="bi bi-star h1 text-muted"></i>
+                                <p class="mt-2 mb-0">Belum ada ulasan</p>
+                            </div>
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Upcoming Bookings -->
-    <div class="mb-4 card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 card-title">Pemesanan yang Akan Datang</h5>
-            <a href="{{ route('tourist.bookings.index') }}" class="btn btn-sm btn-primary">
-                Lihat Semua
-            </a>
-        </div>
-        <div class="card-body">
-            @if($upcomingBookings->count() > 0)
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Paket Wisata</th>
-                                <th>Tanggal</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($upcomingBookings as $booking)
-                                <tr>
-                                    <td>{{ $booking->travelPackage->name }}</td>
-                                    <td>{{ $booking->booking_date->format('d M Y') }}</td>
-                                    <td>
-                                        <span class="badge bg-{{ $booking->booking_status === 'confirmed' ? 'success' : 'warning' }}">
-                                            {{ ucfirst($booking->booking_status) }}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="{{ route('tourist.bookings.show', $booking) }}"
-                                           class="btn btn-sm btn-primary">
-                                            Detail
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @else
-                <p class="my-3 text-center text-muted">
-                    Tidak ada pemesanan yang akan datang
-                </p>
-            @endif
-        </div>
-    </div>
-</div>
 @endsection
