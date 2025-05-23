@@ -57,7 +57,7 @@
                     </div>
                     <div class="mb-3 row">
                         <div class="col-md-4 text-muted">No. Telepon</div>
-                        <div class="col-md-8">{{ auth()->user()->phone ?? '-' }}</div>
+                        <div class="col-md-8">{{ auth()->user()->phone_number ?? '-' }}</div>
                     </div>
                     <div class="mb-3 row">
                         <div class="col-md-4 text-muted">Alamat</div>

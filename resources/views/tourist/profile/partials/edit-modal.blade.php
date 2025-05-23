@@ -28,7 +28,7 @@
                         <input type="tel"
                                class="form-control @error('phone') is-invalid @enderror"
                                name="phone"
-                               value="{{ old('phone', auth()->user()->phone) }}">
+                               value="{{ old('phone', auth()->user()->phone_number) }}">
                         @error('phone')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
