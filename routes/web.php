@@ -7,6 +7,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TouristController;
+use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\CreativeEconomyController;
 use App\Http\Controllers\EconomyCreativeController;
 use App\Http\Controllers\CulturalHeritageController;
@@ -131,11 +132,12 @@ Route::middleware(['auth', 'verified', 'tourist'])->group(function () {
             Route::delete('/{review}', [TouristController::class, 'deleteReview'])->name('destroy');
         });
 
-        // Wishlist
-        Route::prefix('wishlist')->name('wishlist.')->group(function () {
-            Route::get('/', [TouristController::class, 'wishlist'])
-                ->name('index');
-        });
+        // Wishlist routes
+            Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+            Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+            Route::patch('/wishlist/{wishlist}/priority', [WishlistController::class, 'updatePriority'])->name('wishlist.priority');
+            Route::patch('/wishlist/{wishlist}/notes', [WishlistController::class, 'updateNotes'])->name('wishlist.notes');
+        
 
         // Itinerary routes
         Route::prefix('itinerary')->name('itinerary.')->group(function () {

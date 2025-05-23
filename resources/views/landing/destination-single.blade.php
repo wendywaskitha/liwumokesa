@@ -27,9 +27,22 @@
                     <button class="btn btn-outline-primary btn-sm me-2">
                         <i class="bi bi-share me-1"></i>Bagikan
                     </button>
-                    <button class="btn btn-outline-danger btn-sm">
-                        <i class="bi bi-heart me-1"></i>Simpan
-                    </button>
+
+                    @auth
+                        <form action="{{ route('tourist.wishlist.toggle') }}" method="POST" class="d-inline">
+                            @csrf
+                            <input type="hidden" name="wishable_type" value="{{ get_class($destination) }}">
+                            <input type="hidden" name="wishable_id" value="{{ $destination->id }}">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-heart{{ $destination->isWishedBy(auth()->user()) ? '-fill' : '' }} me-1"></i>
+                                {{ $destination->isWishedBy(auth()->user()) ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist' }}
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-heart me-1"></i>Simpan ke Wishlist
+                        </a>
+                    @endauth
                 </div>
             </div>
         </div>
@@ -612,7 +625,8 @@
                                 <div class="rating-input">
                                     @for ($i = 5; $i >= 1; $i--)
                                         <input type="radio" name="rating" value="{{ $i }}"
-                                            id="rating{{ $i }}" required>
+                                            id="rating{{ $i }}" {{ old('rating') == $i ? 'checked' : '' }}
+                                            required>
                                         <label for="rating{{ $i }}">
                                             <i class="bi bi-star-fill"></i>
                                         </label>
@@ -627,10 +641,10 @@
                             <div class="mb-3">
                                 <label class="form-label">Komentar <span class="text-danger">*</span></label>
                                 <textarea class="form-control @error('comment') is-invalid @enderror" name="comment" rows="3" required
-                                    minlength="10" maxlength="1000" placeholder="Bagikan pengalaman Anda..."></textarea>
+                                    minlength="10" maxlength="1000">{{ old('comment') }}</textarea>
                                 <div class="form-text">Minimal 10 karakter, maksimal 1000 karakter</div>
                                 @error('comment')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="mt-1 text-danger small">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>

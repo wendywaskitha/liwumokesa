@@ -5,6 +5,7 @@ namespace App\Models;
 
 use App\Models\Amenity;
 use App\Models\Culinary;
+use App\Traits\Wishable;
 use App\Models\TourGuide;
 use Illuminate\Support\Str;
 use App\Models\Accommodation;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Destination extends Model
 {
     use HasFactory;
+    use Wishable;
 
     protected $fillable = [
         'name',
@@ -156,5 +158,14 @@ class Destination extends Model
 
         // Otherwise, prepend the destinations/ directory
         return 'destinations/' . $value;
+    }
+
+    public function isWishedBy($user)
+    {
+        if (!$user) return false;
+
+        return $this->wishlists()
+            ->where('user_id', $user->id)
+            ->exists();
     }
 }
