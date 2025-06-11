@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TouristController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\ItineraryController;
+use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\CreativeEconomyController;
 use App\Http\Controllers\EconomyCreativeController;
 use App\Http\Controllers\CulturalHeritageController;
@@ -111,6 +112,8 @@ Route::middleware(['auth', 'verified', 'tourist'])->group(function () {
         Route::get('/profile', [TouristController::class, 'profile'])->name('profile');
         Route::put('/profile', [TouristController::class, 'updateProfile'])->name('profile.update');
         Route::put('/profile/photo', [TouristController::class, 'updateProfilePhoto'])->name('profile.update-photo');
+        Route::put('/profile/password', [TouristController::class, 'updatePassword'])
+            ->name('profile.password.update');
 
         // Booking Routes
         Route::controller(BookingController::class)->prefix('bookings')->name('bookings.')->group(function () {

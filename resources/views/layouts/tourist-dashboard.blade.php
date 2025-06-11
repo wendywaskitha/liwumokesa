@@ -147,7 +147,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            z-index: 1020;
+            z-index: 1000;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 

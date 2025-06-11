@@ -9,7 +9,11 @@ use App\Models\ReviewImage;
 use Illuminate\Http\Request;
 use App\Models\TravelPackage;
 use Flasher\Prime\FlasherInterface;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
 
 class TouristController extends Controller
 {
@@ -102,6 +106,50 @@ class TouristController extends Controller
 
         return back()->with('success', 'Profil berhasil diperbarui');
     }
+
+    /**
+     * Update the user's password.
+     */
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        try {
+            // Validate the request
+            $validated = $request->validateWithBag('updatePassword', [
+                'current_password' => ['required', 'current_password'],
+                'password' => ['required', Password::defaults(), 'confirmed'],
+            ]);
+
+            // Update the password
+            $request->user()->update([
+                'password' => Hash::make($validated['password'])
+            ]);
+
+            // Log the activity
+            activity()
+                ->performedOn($request->user())
+                ->withProperties([
+                    'ip' => $request->ip(),
+                    'user_agent' => $request->userAgent()
+                ])
+                ->log('Password updated successfully');
+
+            // Flash success message with more details
+            flash()->addSuccess('Password berhasil diperbarui! Gunakan password baru Anda untuk login selanjutnya.');
+
+            return back();
+
+        } catch (ValidationException $e) {
+            // Handle validation errors
+            flash()->addError('Gagal memperbarui password. Pastikan semua field terisi dengan benar.');
+            return back()->withErrors($e->errors(), 'updatePassword');
+
+        } catch (\Exception $e) {
+            // Handle other errors
+            flash()->addError('Terjadi kesalahan saat memperbarui password. Silakan coba lagi.');
+            return back();
+        }
+    }
+
 
     public function updateProfilePhoto(Request $request)
     {
