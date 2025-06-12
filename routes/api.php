@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\DestinationController;
 use App\Http\Controllers\Api\WisatawanAuthController;
+use App\Http\Controllers\Api\CreativeEconomyController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -33,6 +34,12 @@ Route::prefix('wisatawan')->group(function () {
         Route::prefix('destinations')->group(function () {
             Route::post('/{id}/wishlist', [WishlistController::class, 'toggle']);
             Route::post('/{id}/reviews', [ReviewController::class, 'store']);
+        });
+
+        // Creative Economy routes
+        Route::prefix('creative-economies')->group(function () {
+            Route::get('/', [CreativeEconomyController::class, 'index']); // Menampilkan semua data dan pencarian
+            Route::get('/{id}', [CreativeEconomyController::class, 'show']); // Menampilkan detail berdasarkan ID
         });
     });
 });
