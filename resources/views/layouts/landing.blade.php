@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>@yield('title', 'Pariwisata Muna Barat')</title>
+    <title>@yield('title', 'Visit Liwu Mokesa')</title>
     <meta name="description" content="@yield('meta_description', 'Jelajahi pesona wisata Kabupaten Muna Barat, Sulawesi Tenggara. Temukan destinasi wisata menakjubkan, paket perjalanan, dan event budaya.')">
 
     <!-- Favicon -->

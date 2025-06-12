@@ -1,7 +1,7 @@
 <!-- resources/views/landing/destinations.blade.php -->
 @extends('layouts.landing')
 
-@section('title', 'Destinasi Wisata - Pariwisata Muna Barat')
+@section('title', 'Destinasi Wisata - Visit Liwu Mokesa')
 
 @section('content')
     <!-- Page Header -->

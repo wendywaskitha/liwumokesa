@@ -122,7 +122,7 @@
         <div class="row align-items-center">
             <div class="text-center col-md-6 text-md-start">
                 <p class="mb-3 mb-md-0">
-                    &copy; {{ date('Y') }} {{ \App\Models\Setting::get('general.site_name', 'Pariwisata Muna Barat') }}.
+                    &copy; {{ date('Y') }} {{ \App\Models\Setting::get('general.site_name', 'Visit Liwu Mokesa') }}.
                     All Rights Reserved.
                 </p>
             </div>

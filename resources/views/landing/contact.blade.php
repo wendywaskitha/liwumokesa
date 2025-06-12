@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Kontak Kami - Pariwisata Muna Barat')
+@section('title', 'Kontak Kami - Visit Liwu Mokesa')
 
 @section('content')
     <!-- Hero Section -->
@@ -9,7 +9,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-6">
                     <h1 class="mb-3 display-4 fw-bold">Kontak Kami</h1>
-                    <p class="mb-0 lead">Hubungi kami untuk informasi lebih lanjut tentang pariwisata Muna Barat</p>
+                    <p class="mb-0 lead">Hubungi kami untuk informasi lebih lanjut tentang Visit Liwu Mokesa</p>
                 </div>
             </div>
         </div>

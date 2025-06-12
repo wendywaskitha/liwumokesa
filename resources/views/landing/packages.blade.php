@@ -1,10 +1,10 @@
 @extends('layouts.landing')
 
-@section('title', 'Paket Wisata - Pariwisata Muna Barat')
+@section('title', 'Paket Wisata - Visit Liwu Mokesa')
 
 @section('content')
     <!-- Hero Section -->
-    <section class="bg-primary py-5 text-white">
+    <section class="py-5 text-white bg-primary">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8">
@@ -16,7 +16,7 @@
     </section>
 
     <!-- Search & Filter Section -->
-    <section class="bg-light py-4">
+    <section class="py-4 bg-light">
         <div class="container">
             <form action="{{ route('packages.index') }}" method="GET">
                 <div class="row g-3">
@@ -68,7 +68,7 @@
     <section class="py-5">
         <div class="container">
             @if($packages->isEmpty())
-                <div class="text-center py-5">
+                <div class="py-5 text-center">
                     <i class="bi bi-calendar2-x display-1 text-muted"></i>
                     <h3 class="mt-3">Tidak Ada Paket Wisata</h3>
                     <p class="text-muted">Tidak ada paket wisata yang sesuai dengan filter yang dipilih.</p>
@@ -77,7 +77,7 @@
                 <div class="row g-4">
                     @foreach($packages as $package)
                         <div class="col-md-6 col-lg-4">
-                            <div class="card h-100 border-0 shadow-sm">
+                            <div class="border-0 shadow-sm card h-100">
                                 <!-- Package Image -->
                                 <div class="position-relative">
                                     @if($package->featured_image)
@@ -90,7 +90,7 @@
                                     @endif
 
                                     <!-- Duration Badge -->
-                                    <div class="position-absolute top-0 start-0 p-3">
+                                    <div class="top-0 p-3 position-absolute start-0">
                                         <span class="badge bg-light text-primary">
                                             <i class="bi bi-clock me-1"></i>
                                             {{ $package->duration }} Hari
@@ -98,7 +98,7 @@
                                     </div>
 
                                     <!-- Availability Badge -->
-                                    <div class="position-absolute top-0 end-0 p-3">
+                                    <div class="top-0 p-3 position-absolute end-0">
                                         @if($package->availability === 'available')
                                             <span class="badge bg-success">Tersedia</span>
                                         @elseif($package->availability === 'limited')
@@ -119,7 +119,7 @@
                                     </h5>
 
                                     <!-- Package Type -->
-                                    <p class="text-muted small mb-3">
+                                    <p class="mb-3 text-muted small">
                                         <i class="bi bi-tag me-1"></i>
                                         {{ ucfirst($package->type) }}
                                     </p>
@@ -182,7 +182,7 @@
                 </div>
 
                 <!-- Pagination -->
-                <div class="d-flex justify-content-center mt-5">
+                <div class="mt-5 d-flex justify-content-center">
                     {{ $packages->links() }}
                 </div>
             @endif
@@ -192,10 +192,10 @@
     <!-- Call to Action -->
     <section class="py-5 bg-light">
         <div class="container">
-            <div class="row justify-content-center text-center">
+            <div class="text-center row justify-content-center">
                 <div class="col-lg-8">
                     <h2>Butuh Paket Wisata Kustom?</h2>
-                    <p class="lead mb-4">
+                    <p class="mb-4 lead">
                         Kami dapat membantu Anda merancang paket wisata sesuai kebutuhan dan preferensi Anda.
                     </p>
                     <a href="{{ route('contact') }}?subject=Custom_Package"

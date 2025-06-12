@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Event & Festival - Pariwisata Muna Barat')
+@section('title', 'Event & Festival - Visit Liwu Mokesa')
 
 @section('content')
     <!-- Hero Section -->

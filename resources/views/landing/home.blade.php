@@ -1,7 +1,7 @@
 {{-- resources/views/landing/index.blade.php --}}
 @extends('layouts.landing')
 
-@section('title', \App\Models\Setting::get('general.site_name', 'Pariwisata Muna Barat'))
+@section('title', \App\Models\Setting::get('general.site_name', 'Visit Liwu Mokesa'))
 
 @section('meta_description', \App\Models\Setting::get('seo.meta_description', 'Jelajahi keindahan alam dan warisan
     budaya Kabupaten Muna Barat. Temukan destinasi wisata menakjubkan, paket perjalanan, dan informasi lengkap untuk liburan
