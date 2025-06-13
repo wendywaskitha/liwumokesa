@@ -32,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->brandName(fn() => Setting::get('general.site_name', 'Visit Liwu Mokesa'))
+            ->brandName(fn() => Setting::get('general.site_name', 'Visit Liwu Mokesa Mubar'))
             ->brandLogo(fn() => $this->getBrandLogo())
             ->favicon(fn() => $this->getFavicon())
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
