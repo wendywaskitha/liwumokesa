@@ -18,11 +18,11 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Register a global helper
-        if (!function_exists('setting')) {
-            function setting($key, $default = null) {
-                return \App\Helpers\SettingsHelper::get($key, $default);
-            }
-        }
+        // if (!function_exists('setting')) {
+        //     function setting($key, $default = null) {
+        //         return \App\Helpers\SettingsHelper::get($key, $default);
+        //     }
+        // }
     }
 
     /**
