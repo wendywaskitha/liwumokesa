@@ -1,0 +1,24 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-BjIdjuY2.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/tourist-dashboard.css": {
+    "file": "assets/tourist-dashboard-CWUKIQHB.css",
+    "src": "resources/css/tourist-dashboard.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-hZORcWfI.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/tourist-dashboard.js": {
+    "file": "assets/tourist-dashboard-lCop4eTL.js",
+    "name": "tourist-dashboard",
+    "src": "resources/js/tourist-dashboard.js",
+    "isEntry": true
+  }
+}
