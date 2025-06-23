@@ -8,11 +8,12 @@ use Filament\Panel;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\FilamentUser;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable, LogsActivity;
 
@@ -126,7 +127,13 @@ class User extends Authenticatable
 
     public function canAccessPanel(Panel $panel): bool
     {
-        // return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
-        return true;
+        // Opsi 1: Hanya admin yang bisa akses
+        return $this->isAdmin();
+
+        // Opsi 2: Semua user bisa akses (untuk testing)
+        // return true;
+
+        // Opsi 3: Berdasarkan email domain tertentu
+        // return str_ends_with($this->email, '@yourdomain.com');
     }
 }
