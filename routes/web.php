@@ -157,4 +157,4 @@ Route::middleware(['auth', 'verified', 'tourist'])->group(function () {
             Route::delete('{itinerary}/items/{item}', [ItineraryController::class, 'destroyItem'])->name('items.destroy');
         });
     });
-});
+})->withoutMiddleware(['verified']);
