@@ -51,6 +51,7 @@ Route::prefix('wisatawan')->group(function () {
         Route::get('/type/{type}', [CulinaryController::class, 'getByType']);
         Route::get('/district/{districtId}', [CulinaryController::class, 'getByDistrict']);
         Route::get('/{id}', [CulinaryController::class, 'show']);
+        Route::get('/{id}/nearby', [CulinaryController::class, 'getNearbyById']);
     });
 
 

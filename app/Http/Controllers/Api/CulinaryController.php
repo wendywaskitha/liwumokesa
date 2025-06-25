@@ -461,4 +461,60 @@ class CulinaryController extends Controller
 
         return $data;
     }
+
+    /**
+     * Get nearby culinaries by culinary ID
+     */
+    public function getNearbyById($id)
+    {
+        try {
+            $culinary = Culinary::findOrFail($id);
+
+            if (!$culinary->latitude || !$culinary->longitude) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'No coordinates available for nearby search',
+                    'data' => []
+                ]);
+            }
+
+            $distance = 10; // 10km radius
+
+            $nearbyCulinaries = Culinary::with(['district', 'galleries'])
+                ->select('*')
+                ->selectRaw('
+                    ( 6371 * acos( cos( radians(?) ) *
+                    cos( radians( latitude ) ) *
+                    cos( radians( longitude ) - radians(?) ) +
+                    sin( radians(?) ) *
+                    sin( radians( latitude ) ) ) ) AS distance',
+                    [$culinary->latitude, $culinary->longitude, $culinary->latitude]
+                )
+                ->where('status', true)
+                ->where('id', '!=', $id) // Exclude current culinary
+                ->whereNotNull('latitude')
+                ->whereNotNull('longitude')
+                ->having('distance', '<', $distance)
+                ->orderBy('distance')
+                ->limit(10)
+                ->get();
+
+            $transformedCulinaries = $nearbyCulinaries->map(function ($nearbyCulinary) {
+                return $this->transformCulinary($nearbyCulinary);
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Nearby culinaries retrieved successfully',
+                'data' => $transformedCulinaries
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve nearby culinaries',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
