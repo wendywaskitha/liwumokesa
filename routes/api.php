@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\CulinaryController;
 use App\Http\Controllers\Api\WishlistController;
 use App\Http\Controllers\Api\DestinationController;
 use App\Http\Controllers\Api\AccommodationController;
@@ -27,6 +28,8 @@ Route::prefix('wisatawan')->group(function () {
         Route::get('/{id}/reviews', [DestinationController::class, 'reviews']);
         Route::get('/{id}/galleries', [DestinationController::class, 'galleries']);
     });
+
+    // Accommodation routes (public access)
     Route::prefix('accommodations')->group(function () {
         Route::get('/', [AccommodationController::class, 'index']);
         Route::get('/search', [AccommodationController::class, 'search']);
@@ -36,6 +39,18 @@ Route::prefix('wisatawan')->group(function () {
         Route::get('/type/{type}', [AccommodationController::class, 'getByType']);
         Route::get('/district/{districtId}', [AccommodationController::class, 'getByDistrict']);
         Route::get('/{id}', [AccommodationController::class, 'show']);
+    });
+
+    // Culinary routes (public access) - TAMBAHAN BARU
+    Route::prefix('culinaries')->group(function () {
+        Route::get('/', [CulinaryController::class, 'index']);
+        Route::get('/search', [CulinaryController::class, 'search']);
+        Route::get('/types', [CulinaryController::class, 'getTypes']);
+        Route::get('/recommended', [CulinaryController::class, 'getRecommended']);
+        Route::get('/nearby', [CulinaryController::class, 'getNearby']);
+        Route::get('/type/{type}', [CulinaryController::class, 'getByType']);
+        Route::get('/district/{districtId}', [CulinaryController::class, 'getByDistrict']);
+        Route::get('/{id}', [CulinaryController::class, 'show']);
     });
 
 
@@ -70,6 +85,11 @@ Route::prefix('wisatawan')->group(function () {
         Route::prefix('destinations')->group(function () {
             Route::post('/{id}/wishlist', [WishlistController::class, 'toggle']);
             Route::post('/{id}/reviews', [ReviewController::class, 'store']);
+        });
+
+        Route::prefix('culinaries')->group(function () {
+            Route::post('/{id}/reviews', [ReviewController::class, 'store']);
+            Route::post('/{id}/wishlist', [WishlistController::class, 'toggle']);
         });
 
         // Creative Economy routes
