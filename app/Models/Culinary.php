@@ -54,6 +54,8 @@ class Culinary extends Model
         'price_range_end' => 'float',
     ];
 
+    protected $appends = ['average_rating', 'reviews_count', 'price_range_text'];
+
     /**
      * Boot method untuk model
      * Otomatis generate slug jika slug kosong
