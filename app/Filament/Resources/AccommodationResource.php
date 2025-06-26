@@ -27,6 +27,7 @@ class AccommodationResource extends Resource
     protected static ?int $navigationSort = 10;
 
     protected static ?int $shouldRegisterNavigation = true;
+    
 
     public static function getNavigationBadge(): ?string
     {
