@@ -135,6 +135,6 @@ class User extends Authenticatable implements FilamentUser
 
         // Opsi 3: Berdasarkan email domain tertentu
         // return str_ends_with($this->email, '@yourdomain.com');
-        return $this->role === 'admin' || $this->isAdmin;
+        return $this->isAdmin();
     }
 }
