@@ -13,10 +13,9 @@ class AccommodationPolicy
      */
     public function viewAny(User $user): bool
     {
-        // return $user->hasPermission('view_accommodations') ||
-        //        $user->hasPermission('manage_accommodations') ||
-        //        $user->role === 'admin';
-        return $user->role === 'admin' || $user->hasPermission('manage_accommodations');
+        return $user->hasPermission('view_accommodations') ||
+               $user->hasPermission('manage_accommodations') ||
+               $user->role === 'admin';
     }
 
     /**
